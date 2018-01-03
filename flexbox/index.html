@@ -26,6 +26,11 @@
             padding: 20px;
             border: 1px solid darkgray;
         }
+
+        .box > div {
+            background-color: beige;
+            border: 1px dashed aquamarine;
+        }
     </style>
 </head>
 <body>
@@ -35,18 +40,16 @@
         <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/">Doc</a>
     </div>
     <div class="row">
-        <h5>flex-direction: row; flex-wrap: wrap; align-content: center;</h5>
-        <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: center; min-height: 600px;">
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: center; justify-content: space-evenly; min-height: 600px;">
             <div class="box">1</div>
             <div class="box">2</div>
             <div class="box">3</div>
-            <div class="box" style="flex-grow: 1;">4</div>
-            <div class="box" style="flex-grow: 1;">5</div>
-            <div class="box" style="flex-grow: 3;">6</div>
+            <div class="box" style="flex-grow: 1; width: 100px;">4</div>
+            <div class="box" style="flex-grow: 2; width: 100px;">5</div>
+            <div class="box" style="flex-grow: 1; width: 100px; align-self: flex-end;">6</div>
         </div>
     </div>
     <div class="row">
-        <h5>flex-direction: row; flex-wrap: wrap; align-content: space-evenly;</h5>
         <div style="display: flex; flex-direction: row; flex-wrap: wrap; align-content: space-evenly; min-height: 600px;">
             <div class="box">1</div>
             <div class="box">2</div>
@@ -56,15 +59,24 @@
         </div>
     </div>
     <div class="row">
-        <h5>flex-direction: column;</h5>
-        <div style="display: flex; flex-direction: column;">
+        <div style="display: flex; flex-direction: column; flex-wrap: wrap; justify-content: center; align-content: center; height: 700px;">
             <div class="box">1</div>
             <div class="box">2</div>
             <div class="box">3</div>
+            <div class="box">4</div>
+            <div class="box">5</div>
         </div>
     </div>
     <div class="row">
-        <h5>flex-direction: row-reverse; flex-wrap: no-wrap;</h5>
+        <div style="display: flex; flex-direction: column; flex-wrap: wrap; justify-content: center; align-items: center; height: 700px;">
+            <div class="box">1</div>
+            <div class="box">2</div>
+            <div class="box">3</div>
+            <div class="box">4</div>
+            <div class="box">5</div>
+        </div>
+    </div>
+    <div class="row">
         <div style="display: flex; flex-direction: row-reverse;">
             <div class="box">1</div>
             <div class="box">2</div>
@@ -73,38 +85,46 @@
         </div>
     </div>
     <div class="row">
-        <h5>justify-content, align-items</h5>
         <div style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
             <div class="box" style="display: flex; justify-content: flex-start;">
-                <div style="display: flex; align-items: flex-start;">flex-start</div>
-                <div style="display: flex; align-items: center;">flex-start, center</div>
-                <div style="display: flex; align-items: flex-end;">flex-start</div>
+                <div>X</div>
+                <div>XYZ</div>
             </div>
             <div class="box" style="display: flex; justify-content: flex-end;">
-                <div style="display: flex; align-items: center;">flex-end, center</div>
-                <div style="display: flex; align-items: stretch;">flex-end, stretch</div>
+                <div>X</div>
+                <div>XYZ</div>
             </div>
             <div class="box" style="display: flex; justify-content: center;">
-                <div>center</div>
-                <div>center</div>
+                <div>X</div>
+                <div>XYZ</div>
             </div>
             <div class="box" style="display: flex; justify-content: space-between;">
-                <div>space-between</div>
-                <div>space-between</div>
-                <div>space-between</div>
+                <div>X</div>
+                <div>XYZ</div>
             </div>
             <div class="box" style="display: flex; justify-content: space-around;">
-                <div>space-around</div>
-                <div>space-around</div>
-                <div>space-around</div>
+                <div>X</div>
+                <div>XYZ</div>
             </div>
             <div class="box" style="display: flex; justify-content: space-evenly;">
-                <div>space-evenly</div>
-                <div>space-evenly</div>
-                <div>space-evenly</div>
+                <div>X</div>
+                <div>XYZ</div>
+            </div>
+            <div class="box" style="display: flex; justify-content: flex-start;">
+                <div style="display: flex; align-items: flex-start;">X</div>
+                <div style="display: flex; align-items: center;">XX</div>
+                <div style="display: flex; align-items: flex-end;">XXX</div>
             </div>
         </div>
     </div>
 </div>
 </body>
+<script>
+    $(".container .row").prepend(function (elem) {
+        var style = $(this).find("> div").attr("style");
+        if (style) {
+            return "<pre> " + style.replace(/;/g, ";\n") + "</pre>";
+        }
+    })
+</script>
 </html>
