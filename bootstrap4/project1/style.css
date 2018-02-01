@@ -1,0 +1,49 @@
+
+html, body {
+    height: 100%;
+}
+
+img {
+    max-width: 100%;
+}
+
+#cover {
+    background: #222 url("https://placeimg.com/964/640/nature") center center no-repeat;
+    background-size: cover;
+    color: white;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}
+
+.cover-caption {
+    width: 100%;
+}
+
+#cover .form-group {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-content {
+    padding: 5rem 0;
+}
+
+#about {
+    background: url("https://placeimg.com/720/480/people") center center no-repeat;
+    background-size: cover;
+}
+
+.about-text {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2rem;
+}
+
+#footer-main {
+    background: #222;
+    color: white;
+    font-size: 0.8rem;
+    padding: 2.5rem;
+}
