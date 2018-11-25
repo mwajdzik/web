@@ -1,0 +1,21 @@
+* {
+    font-family: sans-serif;
+}
+
+section:nth-of-type(3) {
+    background-color: burlywood;
+}
+
+h1 {
+    color: white;
+    font-family: inherit;
+}
+
+[disabled] {
+    font-size: 1.5em;
+    color: red;
+}
+
+#form {
+    margin: 2em;
+}
