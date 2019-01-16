@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.js"></script>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+
+<div class="container">
+</div>
+</body>
+<script>
+    // @formatter:off
+    function print_filter(filter) {
+        var f=eval(filter);
+        if (typeof(f.length) != "undefined") {}else{}
+        if (typeof(f.top) != "undefined") {f=f.top(Infinity);}else{}
+        if (typeof(f.dimension) != "undefined") {f=f.dimension(function(d) { return "";}).top(Infinity);}else{}
+        console.log(filter+"("+f.length+") = "+JSON.stringify(f).replace("[","[\n\t").replace(/}\,/g,"},\n\t").replace("]","\n]"));
+    }
+    // @formatter:on
+
+    const data = [
+        {date: "2011-11-14T16:17:54Z", quantity: 2, total: 190, tip: 100, type: "tab"},
+        {date: "2011-11-14T16:20:19Z", quantity: 2, total: 190, tip: 100, type: "tab"},
+        {date: "2011-11-14T16:28:54Z", quantity: 1, total: 300, tip: 200, type: "visa"},
+        {date: "2011-11-14T16:30:43Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T16:48:46Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T16:53:41Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T16:54:06Z", quantity: 1, total: 100, tip: 0, type: "cash"},
+        {date: "2011-11-14T16:58:03Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T17:07:21Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T17:22:59Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T17:25:45Z", quantity: 2, total: 200, tip: 0, type: "cash"},
+        {date: "2011-11-14T17:29:52Z", quantity: 1, total: 200, tip: 100, type: "visa"}
+    ];
+
+    data.forEach(d => d.date = new Date(d.date));
+
+    // ---
+
+    const facts = crossfilter(data);
+
+    console.log('FACTS:');
+    console.log(facts);
+    print_filter('facts');
+
+    console.log('FACTS WITH ADDED ROW:');
+    facts.add([{date: new Date("2011-11-14T17:30:21Z"), quantity: 2, total: 90, tip: 0, type: "tab"}]);
+    print_filter('facts');
+
+    console.log('All Rows', facts.size());
+    console.log('All Rows', facts.groupAll().value());
+    console.log('All Rows', facts.groupAll().reduceCount().value());
+    console.log('All Total', facts.groupAll().reduceSum(d => d.total).value());
+
+    console.log('------------------------');
+
+    {
+        // creates new dimensions on facts
+        const typeDimension = facts.dimension(d => d.type);
+        const tipDimension = facts.dimension(d => d.tip);
+
+        // sorts descending and return 3 top/bottom results
+        console.log('3 TOP TypeDimension', typeDimension.top(3));
+        console.log('3 BOTTOM TipDimension', tipDimension.bottom(3));
+
+        const multiDimension = facts.dimension(d => d.type + ':' + d.tip);
+        const dateDimension = facts.dimension(d => d.date);
+        const scatterDimension = facts.dimension(d => [d.total, d.tip]);
+
+        // dimensions are expensive resource - should be cleaned up when not needed
+        // max number of dimensions are 32
+        typeDimension.dispose();
+        tipDimension.dispose();
+        multiDimension.dispose();
+        dateDimension.dispose();
+        scatterDimension.dispose();
+    }
+
+    console.log('------------------------');
+
+    {
+        const typeDimension = facts.dimension(d => d.type);
+        const typeLenGroup = typeDimension.group(d => d.length);
+
+        // adding a new object after typeDimension and typeLenGroup were created
+        facts.add([{date: new Date("2011-11-14T16:48:46Z"), quantity: 2, total: 90, tip: 0, type: "other"}]);
+
+        console.log(typeLenGroup.all());
+        console.log(typeLenGroup.top(1));
+        console.log(typeLenGroup.size());
+        print_filter(typeLenGroup);
+
+        const dateDimension = facts.dimension(d => d.date);
+        const dateGroup = dateDimension.group(d => d.getHours());
+        print_filter(dateGroup);
+
+        console.log(facts.groupAll().reduceSum(d => d.total).value());
+        console.log(typeDimension.groupAll().reduceSum(d => d.total).value());
+        console.log(typeDimension.groupAll().reduceCount().value());
+
+        // x axis = dimension, y axis = group
+
+        console.log("Type vs Total:");
+        const typeGroup = typeDimension.group();
+        const value = typeGroup.reduceSum(d => d.total);
+        print_filter(value);
+
+        typeDimension.dispose();
+        dateDimension.dispose();
+    }
+
+    console.log('------------------------');
+
+    {
+        function reduceAdd(i, d) {
+            return i + 1;
+        }
+        function reduceRemove(i, d) {
+            return i - 1;
+        }
+        function reduceInitial() {
+            return 0;
+        }
+
+        const typeDimension = facts.dimension(d => d.type);
+        const typeGroup = typeDimension.group();
+
+        console.log('REDUCE:');
+        console.log(typeGroup.reduceCount().all());
+        console.log(typeGroup.reduce(reduceAdd, reduceRemove, reduceInitial).all());
+
+        typeDimension.dispose();
+    }
+
+    console.log('------------------------');
+
+    {
+        const totalDimension = facts.dimension(d => d.total);
+        const typeDimension = facts.dimension(d => d.type);
+
+        console.log('*** Filtering:');
+        const f1 = totalDimension.filterExact(200);
+        print_filter(f1);
+
+        // the previous filter is still in place!
+        const f2 = typeDimension.filterExact('visa');
+        print_filter(f2);
+
+        const f3 = typeDimension.filterExact('cash');
+        print_filter(f3);
+
+        // reset filter
+        const f4 = typeDimension.filterAll();
+        print_filter(f4);
+
+        const f5 = totalDimension.filterAll();
+        print_filter(f5);
+
+        const f6 = typeDimension.filterFunction(d => d === 'visa' || d === 'cash');
+        print_filter(f6);
+
+        totalDimension.dispose();
+        typeDimension.dispose();
+    }
+
+    console.log('------------------------');
+
+    facts.remove();
+    print_filter('facts');
+
+</script>
+</html>
