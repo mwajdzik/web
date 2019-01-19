@@ -37,6 +37,10 @@
             <div class="chart" id="bar-chart-2"></div>
         </div>
         <div class="col-sm">
+            <h2>Bar Chart</h2>
+            <div class="chart" id="bar-chart-3"></div>
+        </div>
+        <div class="col-sm">
             <h2>Pie Chart</h2>
             <div class="chart" id="pie-chart-1"></div>
         </div>
@@ -111,6 +115,23 @@
 
     // ---
 
+    const reduceAdd = (i, d) => {
+        i[d.quantity] = (i[d.quantity] || 0) + d.total;
+        return i;
+    };
+    const reduceRemove = (i, d) => {
+        i[d.quantity] = (i[d.quantity] || 0) - d.total;
+        return i;
+    };
+    const reduceInitial = () => {
+        return {};
+    };
+
+    const stackedTypeGroup = typeDimension.group().reduce(reduceAdd, reduceRemove, reduceInitial);
+    print_filter(stackedTypeGroup);
+
+    // ---
+
     const WIDTH_1 = 325;
     const WIDTH_2 = 720;
     const HEIGHT = 325;
@@ -145,6 +166,27 @@
 
     chart2.xAxis().ticks(3);
     chart2.yAxis().ticks(5);
+
+    // ---
+
+    dc.barChart('#bar-chart-3')
+        .width(WIDTH_1)
+        .height(HEIGHT)
+        .margins({top: 30, bottom: 30, left: 30, right: 30})
+        .legend(dc.legend()
+            .x(WIDTH_1 - 100)
+            .y(10)
+            .itemHeight(15)
+            .gap(5))
+        .dimension(typeDimension)
+        .group(stackedTypeGroup, 'One person', d => d.value[1] || 0)
+        .stack(stackedTypeGroup, 'Two people', d => d.value[2] || 0)
+        .x(d3.scaleBand()
+            .domain(['cash', 'tab', 'visa']))
+        .xUnits(dc.units.ordinal)
+        .barPadding(0.1)
+        .outerPadding(0.05)
+        .yAxis().ticks(5);
 
     // ---
 
