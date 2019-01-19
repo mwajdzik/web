@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Display</title>
+    <style>
+        main {
+            background-color: khaki;
+        }
+
+        div {
+            margin: 15px;
+            padding: 5px;
+        }
+
+        .first {
+            background-color: yellowgreen;
+            display: block;
+        }
+
+        .second {
+            background-color: crimson;
+            display: inline;
+            height: 50px;
+            vertical-align: bottom;
+        }
+
+        .third {
+            color: white;
+            background-color: bisque;
+            display: inline-block;
+            height: 50px;
+            text-decoration-line: underline;
+            font-weight: bolder;
+            vertical-align: middle;
+        }
+
+        .forth {
+            background-color: indianred;
+            display: none;
+        }
+
+        .fifth {
+            background-color: peachpuff;
+            display: inline-block;
+            visibility: hidden;
+            height: calc(8em - 10px);
+            vertical-align: top;
+        }
+    </style>
+</head>
+<body>
+<main>
+    <section>
+        <div class="first">
+            Block
+        </div>
+        <div class="second">
+            Inline - no top/bottom margin
+        </div>
+        <div class="third">
+            Inline-block - has margins and hight
+        </div>
+        <div class="forth">
+            Not visible - does not take space
+        </div>
+        <div class="fifth">
+            Not visible - takes space
+        </div>
+        <div class="third">
+            &nbsp;
+        </div>
+    </section>
+
+    <br>
+
+    <section style="text-align: right">
+        Block-level elements are rendered as a block and hence take up all the available horizontal space. You can set
+        margin-top and margin-bottom and two block-level elements will render in two different lines.
+    </section>
+
+    <br>
+
+    <section style="text-align: left">
+        Inline elements on the other hand only take up the space they require to fit their content in. Hence two
+        inline-elements will fit into the same line (as long as the combined content doesn't take up the entire space in
+        which case a line break would be added).
+        Additionally, setting a width or height on an inline element also has no effect. The width and height is auto to
+        take as much space as required by the content.
+    </section>
+</main>
+</body>
+</html>

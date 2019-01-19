@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.js"></script>
+    <style type="text/css">
+        body {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+</div>
+</body>
+<script>
+    const barData = [5, 11, 18, 20, 25];
+    const array = ['start', 'middle', 'end'];
+
+    const lineData = [
+        {x: '2010', y: 10}, {x: '2011', y: 15}, {x: '2012', y: 7},
+        {x: '2013', y: 18}, {x: '2014', y: 10}, {x: '2015', y: 10}
+    ];
+
+    const timeParse = d3.timeParse('%Y');
+    lineData.forEach(d => d.x = timeParse(d.x));
+
+    const svg = d3.select('.container')
+        .append('svg')
+        .attr('width', '100%')
+        .attr('height', '500px');
+
+    const rainbowScale = d3.scaleSequential(d3.interpolateRainbow)
+        .domain([0, 10]);
+
+    // ---
+
+    const group1 = svg.append('g')
+        .attr('transform', 'translate(10, 10)');
+
+    group1.selectAll('rect')
+        .data(barData)
+        .enter()
+        .append('rect')
+        .attr('fill', 'pink')
+        .attr('height', (d) => d * 15)
+        .attr('width', '80')
+        .attr('x', (d, i) => i * 90)
+        .attr('y', (d) => 400 - d * 15)
+        .attr('rx', '5')
+        .attr('ry', '5');
+
+    group1.selectAll('circle.first')
+        .data(barData)
+        .enter()
+        .append('circle')
+        .attr('class', 'first')
+        .attr('fill', (d, i) => rainbowScale(10 - i))
+        .attr('cx', (d, i) => i * 90 + 40)
+        .attr('cy', 260)
+        .attr('r', (d) => d);
+
+    group1.selectAll('ellipse.second')
+        .data(barData)
+        .enter()
+        .append('ellipse')
+        .attr('class', 'second')
+        .attr('fill', (d, i) => rainbowScale(i))
+        .attr('cx', (d, i) => i * 90 + 40)
+        .attr('cy', 340)
+        .attr('rx', (d) => d)
+        .attr('ry', (d) => 2 * d);
+
+    group1.append('text')
+        .text("Hello D3")
+        .attr('fill', 'pink')
+        .attr('stroke', 'pink')
+        .attr('stroke-width', 2)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-size', 30)
+        .attr('x', 205)
+        .attr('y', 110);
+
+    group1.append('text')
+        .selectAll('tspan')
+        .data(array)
+        .enter()
+        .append('tspan')
+        .attr('fill', 'none')
+        .attr('stroke', 'red')
+        .attr('stroke-width', 2)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-size', 27)
+        .attr('x', 400)
+        .attr('y', (d, i) => 50 + i * 30)
+        .text(d => d);
+
+    // ---
+
+    const width = 400;
+    const height = 400;
+
+    const xScale = d3.scaleTime()
+        .domain(d3.extent(lineData, d => d.x))
+        .range([0, width]);
+
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(lineData, d => d.y)])
+        .range([height, 0]);
+
+    const group2 = svg.append('g')
+        .attr('transform', 'translate(600, 10)');
+
+    const line = d3.line()
+        .x(d => xScale(d.x))
+        .y(d => yScale(d.y))
+        .curve(d3.curveCardinalClosed);
+
+    const area = d3.area()
+        .x(d => xScale(d.x))
+        .y0(d => yScale(d.y))
+        .y1(d => yScale(d.y) * 2)
+        .curve(d3.curveBasis);
+
+    group2.append('path')
+        .attr('fill', 'red')
+        .attr('stroke', 'red')
+        .attr('d', area(lineData));
+
+    group2.append('path')
+        .attr('fill', 'none')
+        .attr('stroke', 'blue')
+        .attr('stroke-width', 3)
+        .attr('d', line(lineData));
+
+    // ---
+
+    const xAxis = d3.axisBottom(xScale);
+    const yAxis = d3.axisLeft(yScale);
+
+    const group3 = svg.append('g')
+        .attr('transform', 'translate(1100, 10)');
+
+    group3.append('g')
+        .attr('class', 'axis x')
+        .attr('transform', 'translate(0, ' + (height + 10) + ')')
+        .call(xAxis);
+
+    group3.append('g')
+        .attr('class', 'axis y')
+        .attr('transform', 'translate(-10, 0)')
+        .call(yAxis);
+
+    const groupLine = d3.line()
+        .x(d => xScale(d.x))
+        .y(d => yScale(d.y))
+        .curve(d3.curveLinear);
+
+    group3.append('path')
+        .attr('fill', 'none')
+        .attr('stroke', 'blue')
+        .attr('stroke-width', 3)
+        .attr('d', groupLine(lineData));
+
+    group3.selectAll('circle')
+        .data(lineData)
+        .enter()
+        .append('circle')
+        .attr('fill', 'red')
+        .attr('cx', d => xScale(d.x))
+        .attr('cy', d => yScale(d.y))
+        .attr('r', 6);
+
+    // ---
+
+    const ordinalScale = d3.scaleOrdinal()
+        .domain(['Mon', 'Tue', 'Wed'])
+        .range([25, 85, 145]);
+
+    const pointScale = d3.scalePoint()
+        .domain(['Mon', 'Tue', 'Wed'])
+        .range([0, 170]);
+
+    const bandScale = d3.scaleBand()
+        .domain(['Mon', 'Tue', 'Wed'])
+        .range([0, 170])
+        .paddingInner(0.2);
+
+    console.log(ordinalScale('Tue'));
+    console.log(pointScale('Tue'));
+    console.log(bandScale('Tue'));
+
+    console.log(rainbowScale(2));
+    console.log(rainbowScale(8));
+</script>
+</html>
