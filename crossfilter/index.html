@@ -10,6 +10,7 @@
 <body>
 
 <div class="container">
+    <a href="https://github.com/square/crossfilter/wiki/API-Reference" target="_blank">Crossfilter API</a>
 </div>
 </body>
 <script>
@@ -23,43 +24,116 @@
     }
     // @formatter:on
 
+    const dateByTod = d => {
+        const hours = d.getHours();
+
+        if (hours >= 0 && hours < 8) {
+            return '00-08';
+        } else if (hours >= 8 && hours < 16) {
+            return '08-16';
+        } else if (hours >= 16 && hours < 24) {
+            return '16-24';
+        }
+    };
+
     const data = [
-        {date: "2011-11-14T16:17:54Z", quantity: 2, total: 190, tip: 100, type: "tab"},
-        {date: "2011-11-14T16:20:19Z", quantity: 2, total: 190, tip: 100, type: "tab"},
-        {date: "2011-11-14T16:28:54Z", quantity: 1, total: 300, tip: 200, type: "visa"},
-        {date: "2011-11-14T16:30:43Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T16:48:46Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T16:53:41Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T16:54:06Z", quantity: 1, total: 100, tip: 0, type: "cash"},
+        {date: "2011-11-14T06:17:54Z", quantity: 2, total: 190, tip: 100, type: "tab"},
+        {date: "2011-11-14T08:20:19Z", quantity: 2, total: 200, tip: 100, type: "tab"},
+        {date: "2011-11-14T10:28:54Z", quantity: 1, total: 300, tip: 200, type: "visa"},
+        {date: "2011-11-14T11:30:43Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T12:48:46Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T13:53:41Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T14:54:06Z", quantity: 1, total: 100, tip: 0, type: "cash"},
         {date: "2011-11-14T16:58:03Z", quantity: 2, total: 90, tip: 0, type: "tab"},
         {date: "2011-11-14T17:07:21Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T17:22:59Z", quantity: 2, total: 90, tip: 0, type: "tab"},
-        {date: "2011-11-14T17:25:45Z", quantity: 2, total: 200, tip: 0, type: "cash"},
-        {date: "2011-11-14T17:29:52Z", quantity: 1, total: 200, tip: 100, type: "visa"}
+        {date: "2011-11-14T18:22:59Z", quantity: 2, total: 90, tip: 0, type: "tab"},
+        {date: "2011-11-14T19:25:45Z", quantity: 2, total: 200, tip: 0, type: "cash"},
+        {date: "2011-11-14T21:29:52Z", quantity: 1, total: 200, tip: 100, type: "visa"}
     ];
 
     data.forEach(d => d.date = new Date(d.date));
 
     // ---
 
+    // crossfilter represents a multi-dimensional dataset
     const facts = crossfilter(data);
-
-    console.log('FACTS:');
-    console.log(facts);
     print_filter('facts');
 
-    console.log('FACTS WITH ADDED ROW:');
-    facts.add([{date: new Date("2011-11-14T17:30:21Z"), quantity: 2, total: 90, tip: 0, type: "tab"}]);
-    print_filter('facts');
+    if (true) {
+        console.log('New fact added:');
+        facts.add([{date: new Date("2011-11-14T17:30:21Z"), quantity: 2, total: 90, tip: 0, type: "tab"}]);
+        print_filter('facts');
 
-    console.log('All Rows', facts.size());
-    console.log('All Rows', facts.groupAll().value());
-    console.log('All Rows', facts.groupAll().reduceCount().value());
-    console.log('All Total', facts.groupAll().reduceSum(d => d.total).value());
+        console.log('facts.size()',
+            facts.size());
 
-    console.log('------------------------');
+        console.log('facts.groupAll().value()',
+            facts.groupAll().value());
 
-    {
+        console.log('facts.groupAll().reduceCount().value()',
+            facts.groupAll().reduceCount().value());
+
+        console.log('facts.groupAll().reduceSum(d => 1).value()',
+            facts.groupAll().reduceSum(d => 1).value());
+
+        console.log('facts.groupAll().reduceSum(d => d.total).value()',
+            facts.groupAll().reduceSum(d => d.total).value());
+
+        console.log(' ');
+    }
+
+    if (true) {
+        // dimensions
+        const dateDimension = facts.dimension(d => d.date);
+        const typeDimension = facts.dimension(d => d.type);
+
+        // groups
+        const hourGroup = dateDimension.group(d => d.getHours());
+        const todGroup = dateDimension.group(dateByTod);
+        const typeGroup = typeDimension.group();
+        const allGroup = facts.groupAll();
+
+        console.log('No filters:');
+
+        const hourGroupsWithTotals = hourGroup.reduceSum(d => d.total);
+        const todGroupsWithTotals = todGroup.reduceSum(d => d.total);
+        const typeGroupWithTotals = typeGroup.reduceSum(d => d.total);
+        const allTotals = allGroup.reduceSum(d => d.total);
+
+        console.log(1, JSON.stringify(hourGroupsWithTotals.all()));
+        console.log(2, JSON.stringify(todGroupsWithTotals.all()));
+        console.log(3, JSON.stringify(typeGroupWithTotals.all()));
+        console.log(4, JSON.stringify(allTotals.value()));
+
+        console.log('Select cash only:');
+        typeDimension.filterExact('cash');
+
+        console.log(11, JSON.stringify(hourGroupsWithTotals.all()));
+        console.log(12, JSON.stringify(todGroupsWithTotals.all()));
+        console.log(13, JSON.stringify(typeGroupWithTotals.all()));
+        console.log(14, JSON.stringify(allTotals.value()));
+
+        console.log('Select cash and after 16:');
+        dateDimension.filterFunction(d => d.getHours() > 16);
+
+        console.log(21, JSON.stringify(hourGroupsWithTotals.all()));
+        console.log(22, JSON.stringify(todGroupsWithTotals.all()));
+        console.log(23, JSON.stringify(typeGroupWithTotals.all()));
+        console.log(24, JSON.stringify(allTotals.value()));
+
+        console.log('No filters:');
+        typeDimension.filterAll();
+        dateDimension.filterAll();
+
+        console.log(34, JSON.stringify(allTotals.value()));
+
+        dateDimension.dispose();
+        typeDimension.dispose();
+
+        console.log(' ');
+    }
+
+    if (false) {
         // creates new dimensions on facts
         const typeDimension = facts.dimension(d => d.type);
         const tipDimension = facts.dimension(d => d.tip);
@@ -81,15 +155,14 @@
         scatterDimension.dispose();
     }
 
-    console.log('------------------------');
-
-    {
+    if (false) {
         const typeDimension = facts.dimension(d => d.type);
-        const typeLenGroup = typeDimension.group(d => d.length);
+        const typeLenGroup = typeDimension.group();
 
         // adding a new object after typeDimension and typeLenGroup were created
         facts.add([{date: new Date("2011-11-14T16:48:46Z"), quantity: 2, total: 90, tip: 0, type: "other"}]);
 
+        console.log('After adding a new row and building dimensions:');
         console.log(typeLenGroup.all());
         console.log(typeLenGroup.top(1));
         console.log(typeLenGroup.size());
@@ -114,15 +187,15 @@
         dateDimension.dispose();
     }
 
-    console.log('------------------------');
-
-    {
+    if (false) {
         function reduceAdd(i, d) {
             return i + 1;
         }
+
         function reduceRemove(i, d) {
             return i - 1;
         }
+
         function reduceInitial() {
             return 0;
         }
@@ -137,9 +210,7 @@
         typeDimension.dispose();
     }
 
-    console.log('------------------------');
-
-    {
+    if (false) {
         const totalDimension = facts.dimension(d => d.total);
         const typeDimension = facts.dimension(d => d.type);
 
@@ -168,10 +239,6 @@
         typeDimension.dispose();
     }
 
-    console.log('------------------------');
-
     facts.remove();
-    print_filter('facts');
-
 </script>
 </html>
