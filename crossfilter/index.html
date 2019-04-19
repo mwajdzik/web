@@ -83,14 +83,19 @@
     }
 
     if (true) {
+        // dimensions are expensive resource - should be cleaned up when not needed, max number of dimensions are 32
+        // x axis = dimension, y axis = group
+
         // dimensions
         const dateDimension = facts.dimension(d => d.date);
         const typeDimension = facts.dimension(d => d.type);
+        const scatterDimension = facts.dimension(d => [d.type, dateByTod(d.date)]);
 
         // groups
         const hourGroup = dateDimension.group(d => d.getHours());
         const todGroup = dateDimension.group(dateByTod);
         const typeGroup = typeDimension.group();
+        const scatterGroup = scatterDimension.group();
         const allGroup = facts.groupAll();
 
         console.log('No filters:');
@@ -98,12 +103,14 @@
         const hourGroupsWithTotals = hourGroup.reduceSum(d => d.total);
         const todGroupsWithTotals = todGroup.reduceSum(d => d.total);
         const typeGroupWithTotals = typeGroup.reduceSum(d => d.total);
+        const scatterWithTotals = scatterGroup.reduceSum(d => d.total);
         const allTotals = allGroup.reduceSum(d => d.total);
 
         console.log(1, JSON.stringify(hourGroupsWithTotals.all()));
         console.log(2, JSON.stringify(todGroupsWithTotals.all()));
         console.log(3, JSON.stringify(typeGroupWithTotals.all()));
-        console.log(4, JSON.stringify(allTotals.value()));
+        console.log(4, JSON.stringify(scatterWithTotals.all()));
+        console.log(5, JSON.stringify(allTotals.value()));
 
         console.log('Select cash only:');
         typeDimension.filterExact('cash');
@@ -111,7 +118,8 @@
         console.log(11, JSON.stringify(hourGroupsWithTotals.all()));
         console.log(12, JSON.stringify(todGroupsWithTotals.all()));
         console.log(13, JSON.stringify(typeGroupWithTotals.all()));
-        console.log(14, JSON.stringify(allTotals.value()));
+        console.log(14, JSON.stringify(scatterWithTotals.all()));
+        console.log(15, JSON.stringify(allTotals.value()));
 
         console.log('Select cash and after 16:');
         dateDimension.filterFunction(d => d.getHours() > 16);
@@ -119,43 +127,24 @@
         console.log(21, JSON.stringify(hourGroupsWithTotals.all()));
         console.log(22, JSON.stringify(todGroupsWithTotals.all()));
         console.log(23, JSON.stringify(typeGroupWithTotals.all()));
-        console.log(24, JSON.stringify(allTotals.value()));
+        console.log(24, JSON.stringify(scatterWithTotals.all()));
+        console.log(25, JSON.stringify(allTotals.value()));
 
         console.log('No filters:');
         typeDimension.filterAll();
+        dateDimension.filterAll();
         dateDimension.filterAll();
 
         console.log(34, JSON.stringify(allTotals.value()));
 
         dateDimension.dispose();
         typeDimension.dispose();
+        scatterDimension.dispose();
 
         console.log(' ');
     }
 
-    if (false) {
-        // creates new dimensions on facts
-        const typeDimension = facts.dimension(d => d.type);
-        const tipDimension = facts.dimension(d => d.tip);
-
-        // sorts descending and return 3 top/bottom results
-        console.log('3 TOP TypeDimension', typeDimension.top(3));
-        console.log('3 BOTTOM TipDimension', tipDimension.bottom(3));
-
-        const multiDimension = facts.dimension(d => d.type + ':' + d.tip);
-        const dateDimension = facts.dimension(d => d.date);
-        const scatterDimension = facts.dimension(d => [d.total, d.tip]);
-
-        // dimensions are expensive resource - should be cleaned up when not needed
-        // max number of dimensions are 32
-        typeDimension.dispose();
-        tipDimension.dispose();
-        multiDimension.dispose();
-        dateDimension.dispose();
-        scatterDimension.dispose();
-    }
-
-    if (false) {
+    if (true) {
         const typeDimension = facts.dimension(d => d.type);
         const typeLenGroup = typeDimension.group();
 
@@ -176,8 +165,6 @@
         console.log(typeDimension.groupAll().reduceSum(d => d.total).value());
         console.log(typeDimension.groupAll().reduceCount().value());
 
-        // x axis = dimension, y axis = group
-
         console.log("Type vs Total:");
         const typeGroup = typeDimension.group();
         const value = typeGroup.reduceSum(d => d.total);
@@ -185,9 +172,11 @@
 
         typeDimension.dispose();
         dateDimension.dispose();
+
+        console.log(' ');
     }
 
-    if (false) {
+    if (true) {
         function reduceAdd(i, d) {
             return i + 1;
         }
@@ -203,18 +192,20 @@
         const typeDimension = facts.dimension(d => d.type);
         const typeGroup = typeDimension.group();
 
-        console.log('REDUCE:');
         console.log(typeGroup.reduceCount().all());
         console.log(typeGroup.reduce(reduceAdd, reduceRemove, reduceInitial).all());
 
         typeDimension.dispose();
+
+        console.log(' ');
     }
 
-    if (false) {
+    if (true) {
+        console.log('*** Filtering:');
+
         const totalDimension = facts.dimension(d => d.total);
         const typeDimension = facts.dimension(d => d.type);
 
-        console.log('*** Filtering:');
         const f1 = totalDimension.filterExact(200);
         print_filter(f1);
 
