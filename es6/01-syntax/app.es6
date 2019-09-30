@@ -43,7 +43,7 @@ let getPrice = () => 5.99;
 console.log(getPrice());
 
 
-// 'this' would be window (!!!) not document (like with a normal function)
+// 'this' would be window (!!!), not document (like with a normal function)
 // document.addEventListener('click', () => console.log(this));
 
 let invoice = {
@@ -93,6 +93,18 @@ show(123, 'search', 'advertising');
 console.log(Math.max(...[12, 20, 18]));
 console.log([...[12, 20, 18]]);
 console.log([...'139', 81]);
+
+let arr = [12, 20, 18];
+console.log([...arr, 15, 19]);
+
+let obj = {
+    a: 1
+};
+
+console.log({
+    ...obj,
+    b: 2
+});
 
 
 // -------------------------------

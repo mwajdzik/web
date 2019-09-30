@@ -25,7 +25,6 @@ console.log(Object.getOwnPropertySymbols(article));
 
 // --- Object extensions:
 
-
 let a = {x: 1}, b = {y: 2};
 Object.setPrototypeOf(a, b);
 console.log(a.x);

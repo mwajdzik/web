@@ -1,6 +1,5 @@
 // -----
 
-
 class Task {
 
     constructor() {
@@ -26,15 +25,13 @@ console.log(typeof Task);                             // function
 console.log(task.getId === Task.prototype.getId);     // true
 console.log(task instanceof Task);                    // true
 
-
 // -----
-
 
 class Project extends Task {
     constructor() {
         super();
-        console.log('Constructing Project');
-        this.location = this.location + ' Beach';
+        console.log('Constructing Project');          // 55
+        this.location = this.location + ' Beach';     // Mazatlan Beach
     }
 
     getId() {
@@ -45,6 +42,5 @@ class Project extends Task {
 let project = new Project();
 console.log(project.getId());
 console.log(project.location);
-
 
 // -----
