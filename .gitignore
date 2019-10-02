@@ -4,3 +4,4 @@ ignored
 dist
 www
 node_modules
+loader
