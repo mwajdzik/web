@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="tooltip.js"></script>
+    <script src="confirm-link.js"></script>
+
+    <!-- the content of the slop is NOT a part of the shadow DOM -->
+    <!-- use ::slotted to style the outside content from the component -->
+    <style>
+        b {
+            color: #2e6da4;
+        }
+
+        /* we can style the custom component */
+        uc-tooltip {
+            padding: 1em;
+            margin: 1em;
+            display: block;
+            border: #5bc0de solid 1px;
+        }
+    </style>
+</head>
+
+<body>
+<div>
+    <uc-tooltip class="important" text="My tooltip content">
+        <b>Some text</b>
+    </uc-tooltip>
+</div>
+
+<div class="some-class">
+    <uc-tooltip></uc-tooltip>
+</div>
+
+<div>
+    <uc-tooltip></uc-tooltip>
+</div>
+
+<div>
+    <a is="uc-confirm-link" href="https://google.com">Google</a>
+</div>
+</body>
+</html>

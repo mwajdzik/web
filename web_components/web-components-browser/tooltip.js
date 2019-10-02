@@ -13,14 +13,45 @@ class Tooltip extends HTMLElement {
         this.shadowRoot.innerHTML = `
             <style>
                 div {
-                    background-color: #2f7eb6;
-                    color: white;
+                    background-color: beige;
+                    color: black;
                     position: absolute;
                     z-index: 10;
-                }            
+                    border: darkgray solid 1px;
+                    border-radius: 4px;
+                    padding: 0.5em;
+                }
+                               
+                .icon {
+                    background-color: darkcyan;
+                    color: white;
+                    padding: 0.15em 0.5em;
+                    border-radius: 50%;
+                    cursor: default;
+                }
+                
+                /* style what is put in the slot */
+                ::slotted(b) {
+                    text-decoration: underline;
+                }
+                
+                /* the default style of the component */
+                :host {
+                    background-color: azure;
+                }
+                
+                /* the default style of the component with .important class */
+                :host(.important) {
+                    background-color: orange;
+                }
+                
+                :host-context(div.some-class) {
+                    background-color: #ffffdb;
+                }
             </style>
+            
             <slot>Some default</slot>
-            <span> (?)</span>
+            <span class="icon">?</span>
         `
     }
 

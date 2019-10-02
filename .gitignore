@@ -1,2 +1,6 @@
 .idea
+.stencil
 ignored
+dist
+www
+node_modules
