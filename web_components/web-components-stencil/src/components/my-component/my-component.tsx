@@ -1,5 +1,5 @@
-import { Component, Prop, h } from '@stencil/core';
-import { format } from '../../utils/utils';
+import {Component, h, Prop} from '@stencil/core';
+import {format} from '../../utils/utils';
 
 @Component({
   tag: 'my-component',
@@ -7,19 +7,14 @@ import { format } from '../../utils/utils';
   shadow: true
 })
 export class MyComponent {
-  /**
-   * The first name
-   */
+
+  /** The first name*/
   @Prop() first: string;
 
-  /**
-   * The middle name
-   */
+  /** The middle name */
   @Prop() middle: string;
 
-  /**
-   * The last name
-   */
+  /** The last name */
   @Prop() last: string;
 
   private getText(): string {
