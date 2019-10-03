@@ -5,69 +5,52 @@
  */
 
 
-import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
+import '@stencil/core';
+
+
 
 
 export namespace Components {
-  interface MyComponent {
-    /**
-    * The first name
-    */
-    'first': string;
-    /**
-    * The last name
-    */
-    'last': string;
-    /**
-    * The middle name
-    */
-    'middle': string;
+
+  interface UcSideDrawer {
+    'title': string;
+  }
+  interface UcSideDrawerAttributes extends StencilHTMLAttributes {
+    'title'?: string;
   }
 }
 
 declare global {
+  interface StencilElementInterfaces {
+    'UcSideDrawer': Components.UcSideDrawer;
+  }
+
+  interface StencilIntrinsicElements {
+    'uc-side-drawer': Components.UcSideDrawerAttributes;
+  }
 
 
-  interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {}
-  var HTMLMyComponentElement: {
-    prototype: HTMLMyComponentElement;
-    new (): HTMLMyComponentElement;
+  interface HTMLUcSideDrawerElement extends Components.UcSideDrawer, HTMLStencilElement {}
+  var HTMLUcSideDrawerElement: {
+    prototype: HTMLUcSideDrawerElement;
+    new (): HTMLUcSideDrawerElement;
   };
+
   interface HTMLElementTagNameMap {
-    'my-component': HTMLMyComponentElement;
-  }
-}
-
-declare namespace LocalJSX {
-  interface MyComponent {
-    /**
-    * The first name
-    */
-    'first'?: string;
-    /**
-    * The last name
-    */
-    'last'?: string;
-    /**
-    * The middle name
-    */
-    'middle'?: string;
+    'uc-side-drawer': HTMLUcSideDrawerElement
   }
 
-  interface IntrinsicElements {
-    'my-component': MyComponent;
+  interface ElementTagNameMap {
+    'uc-side-drawer': HTMLUcSideDrawerElement;
   }
-}
-
-export { LocalJSX as JSX };
 
 
-declare module "@stencil/core" {
   export namespace JSX {
-    interface IntrinsicElements {
-      'my-component': LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
+    export interface Element {}
+    export interface IntrinsicElements extends StencilIntrinsicElements {
+      [tagName: string]: any;
     }
   }
+  export interface HTMLAttributes extends StencilHTMLAttributes {}
+
 }
-
-

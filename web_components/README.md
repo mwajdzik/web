@@ -1,8 +1,11 @@
 
 https://developer.mozilla.org/en-US/docs/Web/Web_Components
 
-npm install -g @bigcommerce/stencil-cli
+
 npm init stecil
+npm run test
+npm start
+
 
 Stencil.js spits out native, vanilla-JS web components.
 These components have (vanilla) JavaScript added to them that enhances the web component experience by:
