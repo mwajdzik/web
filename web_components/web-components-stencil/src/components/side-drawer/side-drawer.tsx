@@ -7,15 +7,28 @@ import {Component, Prop} from '@stencil/core';
 })
 export class SideDrawer {
   @Prop({reflectToAttr: true}) title: string;
+  @Prop({reflectToAttr: true, mutable: true}) open = false;
 
   render() {
-    return (
-      <aside>
-        <header><h1>{this.title}</h1></header>
-        <main>
-          <slot/>
-        </main>
-      </aside>
-    );
+    console.log('Rendering... value: ' + this.title + ', open: ' + this.open);
+
+    if (this.open) {
+      return (
+        <aside>
+          <header>
+            <h1>{this.title}</h1>
+            <button onClick={this.onCloseDrawer.bind(this)}>X</button>
+          </header>
+          <main>
+            <slot/>
+          </main>
+        </aside>
+      );
+    }
+  }
+
+  onCloseDrawer() {
+    console.log('Closing the side drawer...');
+    this.open = false;
   }
 }

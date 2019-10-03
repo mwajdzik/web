@@ -5,13 +5,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0"/>
   <title>Stencil Component Starter</title>
   <script src="/build/mycomponent.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    .side-nav ul {
+      list-style: none;
+    }
+
+    .side-nav li {
+      margin: 1rem 0;
+    }
+
+    .side-nav a {
+      text-decoration: none;
+      color: black;
+    }
+  </style>
 </head>
 
 <body>
-<uc-side-drawer title="Main Menu"></uc-side-drawer>
+<button id="side-drawer-button">Open Side Menu</button>
+
+<uc-side-drawer title="Main Menu" open>
+  <nav class="side-nav">
+    <ul>
+      <li><a href="">A First Link</a></li>
+      <li><a href="">A Second Link</a></li>
+      <li><a href="">A Third Link</a></li>
+    </ul>
+  </nav>
+</uc-side-drawer>
 
 <script>
     const sideDrawer = document.querySelector('uc-side-drawer');
+    const sideDrawerButton = document.querySelector('#side-drawer-button');
 
     setTimeout(() => {
         sideDrawer.title = '** Main Menu **';
@@ -19,7 +48,18 @@
 
     setTimeout(() => {
         sideDrawer.setAttribute('title', '**** Main Menu ****');
-    }, 10000);
+    }, 5000);
+
+    setTimeout(() => {
+        sideDrawer.open = false;
+    }, 7500);
+
+    sideDrawerButton.addEventListener('click', () => {
+        if (!sideDrawer.open) {
+            console.log('Opening the side drawer...');
+            sideDrawer.open = true;
+        }
+    });
 </script>
 </body>
 </html>
