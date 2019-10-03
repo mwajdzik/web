@@ -28,7 +28,7 @@
 <body>
 <button id="side-drawer-button">Open Side Menu</button>
 
-<uc-side-drawer title="Main Menu" open>
+<uc-side-drawer title="Main Menu" opened>
   <nav class="side-nav">
     <ul>
       <li><a href="">A First Link</a></li>
@@ -51,13 +51,14 @@
     }, 5000);
 
     setTimeout(() => {
-        sideDrawer.open = false;
+        sideDrawer.opened = false;
     }, 7500);
 
     sideDrawerButton.addEventListener('click', () => {
-        if (!sideDrawer.open) {
+        if (!sideDrawer.opened) {
             console.log('Opening the side drawer...');
-            sideDrawer.open = true;
+            // sideDrawer.opened = true;
+            sideDrawer.openDrawer();
         }
     });
 </script>

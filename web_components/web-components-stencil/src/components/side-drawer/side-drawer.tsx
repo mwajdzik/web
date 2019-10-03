@@ -1,4 +1,4 @@
-import {Component, Prop} from '@stencil/core';
+import {Component, Method, Prop, State} from '@stencil/core';
 
 @Component({
   tag: 'uc-side-drawer',
@@ -6,21 +6,51 @@ import {Component, Prop} from '@stencil/core';
   shadow: true
 })
 export class SideDrawer {
+
+  // properties are set from the outside
   @Prop({reflectToAttr: true}) title: string;
-  @Prop({reflectToAttr: true, mutable: true}) open = false;
+  @Prop({reflectToAttr: true, mutable: true}) opened = false;   // mutable - watched by Stencil for internal changes
+
+  // state properties hold the internal state
+  @State() showContactInfo = false;                                  // watched by Stencil for internal changes (will rerun render)
 
   render() {
-    console.log('Rendering... value: ' + this.title + ', open: ' + this.open);
+    console.log('Rendering... value: ' + this.title + ', open: ' + this.opened);
 
-    if (this.open) {
+    let mainContent = <slot/>;
+
+    if (this.showContactInfo) {
+      mainContent = (
+        <div id="contact-information">
+          <h2>Contact Information</h2>
+          <p>You can reach us via phone or email.</p>
+          <ul>
+            <li>Phone: 458484848448</li>
+            <li>E-Mail: <a href="mailto:someone@somewhere.com">someone@somewhere.com</a></li>
+          </ul>
+        </div>
+      )
+    }
+
+    if (this.opened) {
       return (
         <aside>
           <header>
             <h1>{this.title}</h1>
             <button onClick={this.onCloseDrawer.bind(this)}>X</button>
           </header>
+          <section id="tabs">
+            <button
+              class={!this.showContactInfo ? 'active' : ''}
+              onClick={this.onContentChange.bind(this, 'nav')}>Navigation
+            </button>
+            <button
+              class={this.showContactInfo ? 'active' : ''}
+              onClick={this.onContentChange.bind(this, 'contact')}>Contact
+            </button>
+          </section>
           <main>
-            <slot/>
+            {mainContent}
           </main>
         </aside>
       );
@@ -29,6 +59,16 @@ export class SideDrawer {
 
   onCloseDrawer() {
     console.log('Closing the side drawer...');
-    this.open = false;
+    this.opened = false;
+  }
+
+  onContentChange(content: string) {
+    console.log('Changing to ' + content);
+    this.showContactInfo = (content === 'contact');
+  }
+
+  @Method()
+  openDrawer() {
+    this.opened = true;
   }
 }
