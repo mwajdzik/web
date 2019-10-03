@@ -55,9 +55,7 @@
     }, 7500);
 
     sideDrawerButton.addEventListener('click', () => {
-        if (!sideDrawer.opened) {
-            console.log('Opening the side drawer...');
-            // sideDrawer.opened = true;
+        if (!sideDrawer.isOpened()) {
             sideDrawer.openDrawer();
         }
     });

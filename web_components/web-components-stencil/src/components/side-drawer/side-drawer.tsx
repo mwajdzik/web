@@ -33,7 +33,8 @@ export class SideDrawer {
     }
 
     if (this.opened) {
-      return (
+      return [
+        <div class="backdrop" onClick={this.onCloseDrawer.bind(this)}/>,
         <aside>
           <header>
             <h1>{this.title}</h1>
@@ -53,18 +54,21 @@ export class SideDrawer {
             {mainContent}
           </main>
         </aside>
-      );
+      ];
     }
   }
 
   onCloseDrawer() {
-    console.log('Closing the side drawer...');
     this.opened = false;
   }
 
   onContentChange(content: string) {
-    console.log('Changing to ' + content);
     this.showContactInfo = (content === 'contact');
+  }
+
+  @Method()
+  isOpened() {
+    return this.opened;
   }
 
   @Method()
