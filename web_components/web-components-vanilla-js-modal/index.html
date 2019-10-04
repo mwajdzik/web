@@ -3,10 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="modal.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 2rem;
+            font-family: sans-serif;
+        }
     </style>
 </head>
 
 <body>
+<uc-modal>
+    <p>With your confirmation you agree to pay the full amount!</p>
+</uc-modal>
+<p>Please confirm your choice.</p>
+<button>Show Details & Confirm</button>
+
+<script>
+    const modal = document.querySelector('uc-modal');
+    const confirmButton = document.querySelector('button');
+
+    confirmButton.addEventListener('click', () => {
+        // modal.setAttribute('opened', '');
+        modal.open();
+    });
+</script>
 </body>
 </html>
