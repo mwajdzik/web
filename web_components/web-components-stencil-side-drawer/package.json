@@ -1,7 +1,7 @@
 {
-  "name": "my-component",
+  "name": "uc-components",
   "version": "0.0.1",
-  "description": "Stencil Component Starter",
+  "description": "My Awesome Components",
   "module": "dist/esm/index.js",
   "main": "dist/index.js",
   "types": "dist/types/components.d.ts",

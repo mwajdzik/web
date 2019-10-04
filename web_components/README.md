@@ -5,6 +5,7 @@ https://developer.mozilla.org/en-US/docs/Web/Web_Components
 npm init stecil
 npm run test
 npm start
+npm run build
 
 
 Stencil.js spits out native, vanilla-JS web components.
