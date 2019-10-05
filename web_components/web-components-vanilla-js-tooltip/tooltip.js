@@ -8,6 +8,7 @@ class Tooltip extends HTMLElement {
 
         this._tooltipIcon = null;
         this._tooltipContainer = null;
+        this._tooltipVisible = false;
         this._tooltipText = 'Some dummy tooltip text';
 
         this.attachShadow({mode: "open"});
@@ -36,13 +37,14 @@ class Tooltip extends HTMLElement {
                 
                 /* SPECIAL SELECTORS: */
                 
-                /* style what is put in the slot */
+                /* style what is put in the slot - only top level */
                 ::slotted(b) {
                     text-decoration: underline;
                 }
                 
                 /* the default style of the component */
                 :host {
+                    position: relative;
                     background-color: azure;
                 }
                 
@@ -63,8 +65,18 @@ class Tooltip extends HTMLElement {
         `
     }
 
-    render() {
+    _render() {
         console.log('3. Rendering...');
+
+        if (this._tooltipVisible) {
+            this._tooltipContainer = document.createElement('div');
+            this._tooltipContainer.textContent = this._tooltipText;
+            this.shadowRoot.appendChild(this._tooltipContainer);
+        } else {
+            if (this._tooltipContainer) {
+                this.shadowRoot.removeChild(this._tooltipContainer);
+            }
+        }
     }
 
     connectedCallback() {
@@ -80,15 +92,13 @@ class Tooltip extends HTMLElement {
     }
 
     _showTooltip() {
-        this._tooltipContainer = document.createElement('div');
-        this._tooltipContainer.textContent = this._tooltipText;
-        this.shadowRoot.appendChild(this._tooltipContainer);
-        this.style.position = 'relative';
+        this._tooltipVisible = true;
+        this._render();
     }
 
     _hideTooltip() {
-        this.shadowRoot.removeChild(this._tooltipContainer);
-        this._tooltipContainer = undefined;
+        this._tooltipVisible = false;
+        this._render();
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
