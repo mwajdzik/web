@@ -1,5 +1,3 @@
-//
-
 class ConfirmLink extends HTMLAnchorElement {
 
     connectedCallback() {

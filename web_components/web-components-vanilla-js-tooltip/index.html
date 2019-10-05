@@ -6,9 +6,20 @@
     <script src="tooltip.js"></script>
     <script src="confirm-link.js"></script>
 
-    <!-- the content of the slop is NOT a part of the shadow DOM -->
-    <!-- use ::slotted to style the outside content from the component -->
+    <!-- the content of the slot is NOT a part of the shadow DOM -->
+    <!-- we can use ::slotted to style the outside content from the component -->
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+
+        /* definition of CSS variables for the components */
+        :root {
+            --color-primary: #777
+        }
+
+        /* set blue color for b in the first uc-tooltip */
         b {
             color: #2e6da4;
         }
@@ -25,7 +36,7 @@
 
 <body>
 <div>
-    <uc-tooltip class="important" text="My tooltip content">
+    <uc-tooltip id="tooltip-one" class="important" text="My tooltip content">
         <b>Some text</b>
     </uc-tooltip>
 </div>
@@ -41,5 +52,13 @@
 <div>
     <a is="uc-confirm-link" href="https://google.com">Google</a>
 </div>
+
+<script>
+    setTimeout(() => {
+        const tooltip1 = document.querySelector('#tooltip-one');
+        tooltip1.setAttribute('text', 'My modified tooltip content');
+        console.log('Modifying the attribute...');
+    }, 2000);
+</script>
 </body>
 </html>

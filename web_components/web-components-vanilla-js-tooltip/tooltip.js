@@ -6,6 +6,7 @@ class Tooltip extends HTMLElement {
         super();
         console.log('1. Element created - basic initializations');
 
+        this._tooltipIcon = null;
         this._tooltipContainer = null;
         this._tooltipText = 'Some dummy tooltip text';
 
@@ -14,12 +15,15 @@ class Tooltip extends HTMLElement {
             <style>
                 div {
                     background-color: beige;
-                    color: black;
+                    color: var(--color-primary, black);
                     position: absolute;
+                    top: 2.5rem;
+                    left: 10rem;
                     z-index: 10;
                     border: darkgray solid 1px;
                     border-radius: 4px;
                     padding: 0.5em;
+                    box-shadow: 1px 1px 6px rgba(0,0,0,0.25);
                 }
                                
                 .icon {
@@ -29,6 +33,8 @@ class Tooltip extends HTMLElement {
                     border-radius: 50%;
                     cursor: default;
                 }
+                
+                /* SPECIAL SELECTORS: */
                 
                 /* style what is put in the slot */
                 ::slotted(b) {
@@ -45,14 +51,20 @@ class Tooltip extends HTMLElement {
                     background-color: orange;
                 }
                 
+                /* allows to specify surrounding conditions - eg. the component placed in a div with a class */
                 :host-context(div.some-class) {
                     background-color: #ffffdb;
                 }
             </style>
             
             <slot>Some default</slot>
+            
             <span class="icon">?</span>
         `
+    }
+
+    render() {
+        console.log('3. Rendering...');
     }
 
     connectedCallback() {
@@ -62,9 +74,9 @@ class Tooltip extends HTMLElement {
             this._tooltipText = this.getAttribute('text');
         }
 
-        const tooltipIcon = this.shadowRoot.querySelector('span');
-        tooltipIcon.addEventListener('mouseenter', this._showTooltip.bind(this));
-        tooltipIcon.addEventListener('mouseleave', this._hideTooltip.bind(this));
+        this._tooltipIcon = this.shadowRoot.querySelector('span');
+        this._tooltipIcon.addEventListener('mouseenter', this._showTooltip.bind(this));
+        this._tooltipIcon.addEventListener('mouseleave', this._hideTooltip.bind(this));
     }
 
     _showTooltip() {
@@ -79,12 +91,22 @@ class Tooltip extends HTMLElement {
         this._tooltipContainer = undefined;
     }
 
-    attributeChangedCallback() {
-        console.log('3. Observed attribute updated');
+    attributeChangedCallback(name, oldValue, newValue) {
+        console.log('4. Observed attribute updated', name, oldValue, newValue);
+
+        if (oldValue !== newValue && name === 'text') {
+            this._tooltipText = newValue;
+        }
     }
 
     disconnectedCallback() {
-        console.log('n. Element detached from DOM - clean up work');
+        console.log('5. Element detached from DOM - clean up work');
+        this._tooltipIcon.removeEventListener('mouseenter', this._showTooltip);
+        this._tooltipIcon.removeEventListener('mouseleave', this._hideTooltip);
+    }
+
+    static get observedAttributes() {
+        return ['text'];
     }
 }
 
