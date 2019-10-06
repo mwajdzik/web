@@ -19,6 +19,7 @@ export class StockPrice {
 
   onFetchStockPrice(event: Event) {
     event.preventDefault();
+    this.submitButton.disabled = true;
 
     const input = this.el.shadowRoot.querySelector('#stock-symbol') as HTMLInputElement;
     const stockSymbol = input.value;
@@ -30,10 +31,11 @@ export class StockPrice {
       .then(res => res.json())
       .then(res => {
         if (!res['Global Quote'] || !res['Global Quote']['05. price']) {
-          throw new Error('Invalid stock ticker');
+          throw new Error('Invalid stock ticker!');
         }
 
         this.fetchedPrice = +res['Global Quote']['05. price'];
+        this.submitButton.disabled = false;
       })
       .catch(err => {
         this.error = err.message;
@@ -42,7 +44,7 @@ export class StockPrice {
   }
 
   render() {
-    let dataContent;
+    let dataContent = <p>Please enter a symbol!</p>;
 
     if (this.error) {
       dataContent = <p>{this.error}</p>;
@@ -73,6 +75,9 @@ export class StockPrice {
   onUserInput(event: Event) {
     this.stockUserInput = (event.target as HTMLInputElement).value;
     this.stockUserInputValid = this.stockUserInput.trim().length > 0;
+    this.submitButton.disabled = false;
+    this.fetchedPrice = null;
+    this.error = null;
 
     console.log(this.stockUserInput);
   }

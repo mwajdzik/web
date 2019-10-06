@@ -6,3 +6,4 @@ www
 node_modules
 loader
 components.d.ts
+api.tsx
