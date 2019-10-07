@@ -10,7 +10,6 @@ export class StockPrice {
 
   submitButton: HTMLButtonElement;
   stockInput: HTMLInputElement;
-  stockUserInputValid = false;
 
   @Element() el: HTMLElement;
   @State() fetchedPrice: number;
@@ -22,22 +21,27 @@ export class StockPrice {
   @Watch('stockSymbol')
   stockSymbolChanged(newValue: string, oldValue: string) {
     if (newValue !== oldValue) {
+      console.log('@Watch: setting a new value: ' + newValue);
       this.fetchStockSymbol(newValue);
     }
   }
 
   onFetchStockPrice(event: Event) {
     event.preventDefault();
-    this.submitButton.disabled = true;
 
-    // three ways of accessing the value
-    const input = this.el.shadowRoot.querySelector('#stock-symbol') as HTMLInputElement;
-    console.log(input.value, this.stockInput.value, this.stockUserInput);
+    const inputValue1 = this.stockUserInput;
+    const inputValue2 = this.stockInput.value;
+    const inputValue3 = (this.el.shadowRoot.querySelector('#stock-symbol') as HTMLInputElement).value;
+    console.log('Three ways of accessing the value from the input:', inputValue1, inputValue2, inputValue3);
 
-    this.fetchStockSymbol(input.value);
+    this.fetchStockSymbol(inputValue1);
   }
 
   fetchStockSymbol(stockSymbol: string) {
+    this.submitButton.disabled = true;
+
+    this.error = undefined;
+    this.stockSymbol = stockSymbol;
     this.stockUserInput = stockSymbol;
 
     fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${AV_API_KEY}`)
@@ -56,17 +60,29 @@ export class StockPrice {
       })
   }
 
+  onUserInput(event: Event) {
+    console.log('onUserInput()');
+
+    this.stockUserInput = (event.target as HTMLInputElement).value;
+    this.submitButton.disabled = false;
+    this.fetchedPrice = null;
+    this.error = null;
+
+    console.log(this.stockUserInput);
+  }
+
   render() {
     console.log('render()');
 
-    let dataContent = <p>Please enter a symbol!</p>;
+    let dataContent;
+    const stockUserInputValid = this.stockSymbol.trim().length > 0;
 
     if (this.error) {
       dataContent = <p>{this.error}</p>;
-    }
-
-    if (this.fetchedPrice) {
+    } else if (this.fetchedPrice) {
       dataContent = <p>Price: ${this.fetchedPrice}</p>;
+    } else {
+      dataContent = <p>Please enter a symbol!</p>
     }
 
     return [
@@ -76,7 +92,7 @@ export class StockPrice {
                onInput={this.onUserInput.bind(this)}
                ref={el => this.stockInput = el}/>
         <button type="submit"
-                disabled={!this.stockUserInputValid}
+                disabled={!stockUserInputValid}
                 ref={el => this.submitButton = el}>
           Fetch
         </button>
@@ -86,6 +102,8 @@ export class StockPrice {
       </div>
     ]
   }
+
+  // Lifecycle hooks:
 
   componentWillLoad() {
     console.log('Component will load!');
@@ -110,17 +128,5 @@ export class StockPrice {
 
   componentDidUnload() {
     console.log('Component did unload!');
-  }
-
-  onUserInput(event: Event) {
-    console.log('onUserInput()');
-
-    this.stockUserInput = (event.target as HTMLInputElement).value;
-    this.stockUserInputValid = this.stockUserInput.trim().length > 0;
-    this.submitButton.disabled = false;
-    this.fetchedPrice = null;
-    this.error = null;
-
-    console.log(this.stockUserInput);
   }
 }
