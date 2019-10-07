@@ -12,9 +12,15 @@ export class StockPrice {
   stockInput: HTMLInputElement;
 
   @Element() el: HTMLElement;
+
   @State() fetchedPrice: number;
   @State() stockUserInput: string;
   @State() error: string;
+  @State() loading = false;
+
+  // ------------------------------------------------------------------------------------
+  // @Watch for stockSymbol
+  // ------------------------------------------------------------------------------------
 
   @Prop({mutable: true, reflectToAttr: true}) stockSymbol: string;
 
@@ -25,6 +31,8 @@ export class StockPrice {
       this.fetchStockSymbol(newValue);
     }
   }
+
+  // ------------------------------------------------------------------------------------
 
   onFetchStockPrice(event: Event) {
     event.preventDefault();
@@ -37,6 +45,10 @@ export class StockPrice {
     this.fetchStockSymbol(inputValue1);
   }
 
+  // ------------------------------------------------------------------------------------
+  // @Listen for ucSymbolSelected
+  // ------------------------------------------------------------------------------------
+
   @Listen('body:ucSymbolSelected')
   onStockSymbolSelected(event: CustomEvent) {
     if (event.detail && event.detail !== this.stockSymbol) {
@@ -44,9 +56,10 @@ export class StockPrice {
     }
   }
 
-  fetchStockSymbol(stockSymbol: string) {
-    this.submitButton.disabled = true;
+  // ------------------------------------------------------------------------------------
 
+  fetchStockSymbol(stockSymbol: string) {
+    this.loading = true;
     this.error = undefined;
     this.stockSymbol = stockSymbol;
     this.stockUserInput = stockSymbol;
@@ -59,11 +72,13 @@ export class StockPrice {
         }
 
         this.fetchedPrice = +res['Global Quote']['05. price'];
-        this.submitButton.disabled = false;
+        this.loading = false;
       })
       .catch(err => {
-        this.error = err.message;
         console.log(this.error);
+        this.error = err.message;
+        this.fetchedPrice = null;
+        this.loading = false;
       })
   }
 
@@ -71,12 +86,27 @@ export class StockPrice {
     console.log('onUserInput()');
 
     this.stockUserInput = (event.target as HTMLInputElement).value;
-    this.submitButton.disabled = false;
     this.fetchedPrice = null;
     this.error = null;
 
     console.log(this.stockUserInput);
   }
+
+  // ------------------------------------------------------------------------------------
+  // hostData - executed after render()
+  // ------------------------------------------------------------------------------------
+
+  hostData() {
+    console.log('hostData()');
+
+    return {
+      class: this.error ? 'error' : ''
+    }
+  }
+
+  // ------------------------------------------------------------------------------------
+  // render
+  // ------------------------------------------------------------------------------------
 
   render() {
     console.log('render()');
@@ -86,6 +116,8 @@ export class StockPrice {
 
     if (this.error) {
       dataContent = <p>{this.error}</p>;
+    } else if (this.loading) {
+      dataContent = <p>Loading...</p>;
     } else if (this.fetchedPrice) {
       dataContent = <p>Price: ${this.fetchedPrice}</p>;
     } else {
@@ -99,7 +131,7 @@ export class StockPrice {
                onInput={this.onUserInput.bind(this)}
                ref={el => this.stockInput = el}/>
         <button type="submit"
-                disabled={!stockUserInputValid}
+                disabled={!stockUserInputValid || this.loading}
                 ref={el => this.submitButton = el}>
           Fetch
         </button>
@@ -110,7 +142,9 @@ export class StockPrice {
     ]
   }
 
+  // ------------------------------------------------------------------------------------
   // Lifecycle hooks:
+  // ------------------------------------------------------------------------------------
 
   componentWillLoad() {
     console.log('Component will load!');
