@@ -1,4 +1,4 @@
-import {Component, Element, State} from '@stencil/core';
+import {Component, Element, Prop, State, Watch} from '@stencil/core';
 import {AV_API_KEY} from "../../global/api";
 
 @Component({
@@ -17,15 +17,28 @@ export class StockPrice {
   @State() stockUserInput: string;
   @State() error: string;
 
+  @Prop({mutable: true, reflectToAttr: true}) stockSymbol: string;
+
+  @Watch('stockSymbol')
+  stockSymbolChanged(newValue: string, oldValue: string) {
+    if (newValue !== oldValue) {
+      this.fetchStockSymbol(newValue);
+    }
+  }
+
   onFetchStockPrice(event: Event) {
     event.preventDefault();
     this.submitButton.disabled = true;
 
-    const input = this.el.shadowRoot.querySelector('#stock-symbol') as HTMLInputElement;
-    const stockSymbol = input.value;
-
     // three ways of accessing the value
+    const input = this.el.shadowRoot.querySelector('#stock-symbol') as HTMLInputElement;
     console.log(input.value, this.stockInput.value, this.stockUserInput);
+
+    this.fetchStockSymbol(input.value);
+  }
+
+  fetchStockSymbol(stockSymbol: string) {
+    this.stockUserInput = stockSymbol;
 
     fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${AV_API_KEY}`)
       .then(res => res.json())
@@ -44,6 +57,8 @@ export class StockPrice {
   }
 
   render() {
+    console.log('render()');
+
     let dataContent = <p>Please enter a symbol!</p>;
 
     if (this.error) {
@@ -72,7 +87,34 @@ export class StockPrice {
     ]
   }
 
+  componentWillLoad() {
+    console.log('Component will load!');
+    this.stockUserInput = this.stockSymbol;
+  }
+
+  componentDidLoad() {
+    console.log('Component did load!');
+
+    if (this.stockSymbol) {
+      this.fetchStockSymbol(this.stockSymbol);
+    }
+  }
+
+  componentWillUpdate() {
+    console.log('Component will update!');
+  }
+
+  componentDidUpdate() {
+    console.log('Component did update!');
+  }
+
+  componentDidUnload() {
+    console.log('Component did unload!');
+  }
+
   onUserInput(event: Event) {
+    console.log('onUserInput()');
+
     this.stockUserInput = (event.target as HTMLInputElement).value;
     this.stockUserInputValid = this.stockUserInput.trim().length > 0;
     this.submitButton.disabled = false;
