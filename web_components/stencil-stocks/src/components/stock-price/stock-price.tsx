@@ -1,4 +1,4 @@
-import {Component, Element, Prop, State, Watch} from '@stencil/core';
+import {Component, Element, Listen, Prop, State, Watch} from '@stencil/core';
 import {AV_API_KEY} from "../../global/api";
 
 @Component({
@@ -35,6 +35,13 @@ export class StockPrice {
     console.log('Three ways of accessing the value from the input:', inputValue1, inputValue2, inputValue3);
 
     this.fetchStockSymbol(inputValue1);
+  }
+
+  @Listen('body:ucSymbolSelected')
+  onStockSymbolSelected(event: CustomEvent) {
+    if (event.detail && event.detail !== this.stockSymbol) {
+      this.fetchStockSymbol(event.detail);
+    }
   }
 
   fetchStockSymbol(stockSymbol: string) {
