@@ -13,6 +13,9 @@ input {
   flex-grow: 1;
   border: none;
   outline: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  padding: 2px;
 }
 
 button {
@@ -21,6 +24,7 @@ button {
   width: 30px;
   border: none;
   outline: none;
+  box-sizing: border-box;
 }
 
 .dropdown {
@@ -32,14 +36,17 @@ button {
 .dropdown-menu {
 }
 
-.dropdown-menu ul {
+ul {
   list-style: none;
-  padding: 0;
+  padding: 6px;
   margin: 0;
   position: relative;
   min-width: 100%;
   width: 100%;
   border: 1px solid #ccc;
+  box-sizing: border-box;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 li {
@@ -50,5 +57,4 @@ li {
   line-height: normal;
   cursor: pointer;
   margin-bottom: 0;
-  min-width: 100%;
 }
