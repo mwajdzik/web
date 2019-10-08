@@ -11,12 +11,16 @@ input {
   display: block;
   height: 100%;
   flex-grow: 1;
+  border: none;
+  outline: none;
 }
 
 button {
   display: block;
   height: 100%;
   width: 30px;
+  border: none;
+  outline: none;
 }
 
 .dropdown {

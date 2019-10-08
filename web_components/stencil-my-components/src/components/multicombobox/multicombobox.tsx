@@ -1,4 +1,4 @@
-import {Component, Element, Prop, State, h} from '@stencil/core';
+import {Component, Element, h, Prop, State} from '@stencil/core';
 import * as _ from 'lodash-es';
 
 @Component({
@@ -22,10 +22,10 @@ export class StockPrice {
     if (this.isOpened && this.items.length > 0) {
       dropdown = (
         <div class="dropdown-menu">
-          <ul>
+          <ul onClick={this.onListItemClick.bind(this)}>
             {_.map(this.items, (item, index) => {
-              const s = {'top': (index * 30) + 'px'};
-              return <li style={s}>{item}</li>
+              const style = {'top': (index * 30) + 'px'};
+              return <li style={style}>{item}</li>
             })}
           </ul>
         </div>
@@ -46,5 +46,10 @@ export class StockPrice {
 
   onButtonClick() {
     this.isOpened = !this.isOpened;
+  }
+
+  onListItemClick(event: MouseEvent) {
+    const itemClicked = (event.target as HTMLLIElement).textContent;
+    console.log(itemClicked);
   }
 }
