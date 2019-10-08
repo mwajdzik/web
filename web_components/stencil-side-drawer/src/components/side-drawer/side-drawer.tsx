@@ -1,4 +1,4 @@
-import {Component, Method, Prop, State} from '@stencil/core';
+import {Component, Method, Prop, State, h} from '@stencil/core';
 
 @Component({
   tag: 'uc-side-drawer',
@@ -67,7 +67,7 @@ export class SideDrawer {
   }
 
   @Method()
-  isOpened() {
+  async isOpened() {
     return this.opened;
   }
 

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0"/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
   <title>Stencil Component Starter</title>
-  <script src="/build/mycomponent.js"></script>
+
+  <script type="module" src="/build/stencil-new-version.esm.js"></script>
+  <script nomodule src="/build/stencil-new-version.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -55,9 +57,12 @@
     }, 7500);
 
     sideDrawerButton.addEventListener('click', () => {
-        if (!sideDrawer.isOpened()) {
-            sideDrawer.openDrawer();
-        }
+        sideDrawer.isOpened()
+            .then((opened) => {
+                if (!opened) {
+                    sideDrawer.openDrawer();
+                }
+            });
     });
 </script>
 </body>
