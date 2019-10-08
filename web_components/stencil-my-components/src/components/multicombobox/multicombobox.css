@@ -58,3 +58,7 @@ li {
   cursor: pointer;
   margin-bottom: 0;
 }
+
+li.selected {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAAWlBMVEX///81NTU5OTlCQkJKSkpNTU1jY2NkZGRsbGxtbW15eXmRkZGTk5OXl5eYmJiampq0tLTAwMDCwsLExMTKysrOzs7R0dHY2Njr6+v5+fn7+/v9/f3+/v7///833LtAAAAAAXRSTlMAQObYZgAAAGNJREFUeNpdz0kSgCAMBMBEwA3cFTf4/ze1BqhC55SeXBIiIzlFmpel9Sm21CTBVEjiNF99fXiGA5kH+F72wLgfC7WdHQivglUDBrtJMBiNAoz2bm7B4Dz8v+97f6WJdPafpgdGNw+4BSMYWwAAAABJRU5ErkJggg==);
+}
