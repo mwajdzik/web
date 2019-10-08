@@ -22,32 +22,39 @@ export class StockPrice {
 
   render() {
     let dropdown;
+    let hasItems = false;
 
-    if (this.isOpened && this.items.length > 0) {
+    if (this.isOpened) {
       const filteredItems = _.filter(this.items, (item) => item.startsWith(this.itemPrefix));
 
-      dropdown = (
-        <div class="dropdown-menu">
-          <ul onClick={this.onListItemClick.bind(this)}>
-            {_.map(filteredItems, (item, index) => {
-              const style = {'top': (index * 30) + 'px'};
-              const clazz = this.selectedItems.has(item) ? 'selected' : '';
+      if (filteredItems.length > 0) {
+        hasItems = true;
 
-              return <li style={style} class={clazz}>{item}</li>
-            })}
-          </ul>
-        </div>
-      )
+        dropdown = (
+          <div class="dropdown-menu">
+            <ul onClick={this.onListItemClick.bind(this)}>
+              {_.map(filteredItems, (item, index) => {
+                const style = {'top': (index * 30) + 'px'};
+                const clazz = this.selectedItems.has(item) ? 'selected' : '';
+
+                return <li style={style} class={clazz}>{item}</li>
+              })}
+            </ul>
+          </div>
+        )
+      }
     }
 
     return [
-      <input type="text"
-             onKeyUp={this.onInputChanged.bind(this)}
-             ref={el => this.inputEl = el}/>,
-      <button type="button"
-              onClick={this.onButtonClick.bind(this)}
-              ref={el => this.buttonEl = el}>^
-      </button>,
+      <div class={hasItems ? 'opened controls' : 'controls'}>
+        <input type='text'
+               onKeyUp={this.onInputChanged.bind(this)}
+               ref={el => this.inputEl = el}/>
+        <button type='button'
+                onClick={this.onButtonClick.bind(this)}
+                ref={el => this.buttonEl = el}>#
+        </button>
+      </div>,
       <div class="dropdown">
         {dropdown}
       </div>
