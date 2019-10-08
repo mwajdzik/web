@@ -30,7 +30,7 @@
 <body>
 <button id="side-drawer-button">Open Side Menu</button>
 
-<uc-side-drawer title="Main Menu" opened>
+<uc-side-drawer side-drawer-title="Main Menu" opened>
   <nav class="side-nav">
     <ul>
       <li><a href="">A First Link</a></li>
@@ -45,11 +45,11 @@
     const sideDrawerButton = document.querySelector('#side-drawer-button');
 
     setTimeout(() => {
-        sideDrawer.title = '** Main Menu **';
+        sideDrawer.sideDrawerTitle = '** Main Menu **';
     }, 2500);
 
     setTimeout(() => {
-        sideDrawer.setAttribute('title', '**** Main Menu ****');
+        sideDrawer.setAttribute('side-drawer-title', '**** Main Menu ****');
     }, 5000);
 
     setTimeout(() => {

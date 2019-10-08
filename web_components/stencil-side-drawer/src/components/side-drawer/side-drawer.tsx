@@ -8,14 +8,14 @@ import {Component, Method, Prop, State, h} from '@stencil/core';
 export class SideDrawer {
 
   // properties are set from the outside
-  @Prop({reflectToAttr: true}) title: string;
-  @Prop({reflectToAttr: true, mutable: true}) opened = false;   // mutable - watched by Stencil for internal changes
+  @Prop({reflect: true}) sideDrawerTitle: string;
+  @Prop({reflect: true, mutable: true}) opened = false;         // mutable - watched by Stencil for internal changes
 
   // state properties hold the internal state
   @State() showContactInfo = false;                                  // watched by Stencil for internal changes (will rerun render)
 
   render() {
-    console.log('Rendering... value: ' + this.title + ', open: ' + this.opened);
+    console.log('Rendering... value: ' + this.sideDrawerTitle + ', open: ' + this.opened);
 
     let mainContent = <slot/>;
 
@@ -37,7 +37,7 @@ export class SideDrawer {
         <div class="backdrop" onClick={this.onCloseDrawer.bind(this)}/>,
         <aside>
           <header>
-            <h1>{this.title}</h1>
+            <h1>{this.sideDrawerTitle}</h1>
             <button onClick={this.onCloseDrawer.bind(this)}>X</button>
           </header>
           <section id="tabs">
