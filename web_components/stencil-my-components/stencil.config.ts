@@ -1,15 +1,18 @@
-import {Config} from '@stencil/core';
+import { Config } from '@stencil/core';
 
 export const config: Config = {
-  namespace: 'mycomponent',
+  namespace: 'stencil-new-version',
   outputTargets: [
     {
-      type: 'dist'
+      type: 'dist',
+      esmLoaderPath: '../loader'
     },
-    // useful when with create a static page with StencilJS only:
+    {
+      type: 'docs-readme'
+    },
     {
       type: 'www',
-      serviceWorker: null
+      serviceWorker: null // disable service workers
     }
   ]
 };
