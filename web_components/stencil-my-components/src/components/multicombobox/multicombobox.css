@@ -1,0 +1,50 @@
+:host {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100%;
+  background-color: #4cae4c;
+}
+
+input {
+  display: block;
+  height: 100%;
+  flex-grow: 1;
+}
+
+button {
+  display: block;
+  height: 100%;
+  width: 30px;
+}
+
+.dropdown {
+  position: absolute;
+  min-width: 100%;
+  top: 100%;
+}
+
+.dropdown-menu {
+}
+
+.dropdown-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  min-width: 100%;
+  width: 100%;
+  border: 1px solid #ccc;
+}
+
+li {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAAG1BMVEX///+tra26urrGxsbHx8fa2trb29vx8fH///8sfbT3AAAAAXRSTlMAQObYZgAAADRJREFUCNfFj7kRACAMwxyTx/tPTJUjsADq1ElA0homkKvUlAd4VCrCNLHv/val3/2I8RfYnJ4FkE+QHTgAAAAASUVORK5CYII=);
+  background-position: 6px 6px;
+  background-repeat: no-repeat;
+  padding: 0.35em 0 0.35em 2em;
+  line-height: normal;
+  cursor: pointer;
+  margin-bottom: 0;
+  min-width: 100%;
+}
