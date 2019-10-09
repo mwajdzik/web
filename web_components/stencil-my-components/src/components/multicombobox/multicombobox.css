@@ -37,6 +37,7 @@ button {
   border: none;
   outline: none;
   box-sizing: border-box;
+  cursor: pointer;
 }
 
 .dropdown {
@@ -63,7 +64,7 @@ ul {
 
 li {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAMAAAAMCGV4AAAAG1BMVEX///+tra26urrGxsbHx8fa2trb29vx8fH///8sfbT3AAAAAXRSTlMAQObYZgAAADRJREFUCNfFj7kRACAMwxyTx/tPTJUjsADq1ElA0homkKvUlAd4VCrCNLHv/val3/2I8RfYnJ4FkE+QHTgAAAAASUVORK5CYII=);
-  background-position: 6px 6px;
+  background-position: 6px 7px;
   background-repeat: no-repeat;
   padding: 0.35em 0 0.35em 2em;
   line-height: normal;

@@ -1,6 +1,12 @@
 import {Component, Element, h, Prop, State} from '@stencil/core';
 import * as _ from 'lodash-es';
 
+/*
+* ToDo:
+*  select all
+*  validate - error
+*  disabled
+* */
 @Component({
   tag: 'ro-multi-combobox',
   styleUrl: './multicombobox.css',
@@ -18,9 +24,12 @@ export class StockPrice {
   @State() itemPrefix = '';
   @State() selectedItems = new Set<string>();
 
+  @Prop({mutable: true}) disabled = false;
   @Prop({mutable: true}) items: string[] = [];
 
   render() {
+    console.log('render()');
+
     let dropdown;
     let hasItems = false;
 
@@ -33,8 +42,9 @@ export class StockPrice {
         dropdown = (
           <div class="dropdown-menu">
             <ul onClick={this.onListItemClick.bind(this)}>
+              <li>Select all</li>
               {_.map(filteredItems, (item, index) => {
-                const style = {'top': (index * 30) + 'px'};
+                const style = {'top': ((index + 1) * 30) + 'px'};
                 const clazz = this.selectedItems.has(item) ? 'selected' : '';
 
                 return <li style={style} class={clazz}>{item}</li>
@@ -48,7 +58,9 @@ export class StockPrice {
     return [
       <div class={hasItems ? 'opened controls' : 'controls'}>
         <input type='text'
-               onKeyUp={this.onInputChanged.bind(this)}
+               onBlur={this.onInputBlur.bind(this)}
+               onChange={this.onInputChanged.bind(this)}
+               onKeyUp={this.onKeyPressed.bind(this)}
                ref={el => this.inputEl = el}/>
         <button type='button'
                 onClick={this.onButtonClick.bind(this)}
@@ -65,26 +77,33 @@ export class StockPrice {
     this.isOpened = !this.isOpened;
   }
 
-  onInputChanged(event: KeyboardEvent) {
-    if (event.key == 'Enter') {
-      if (this.items.includes(this.inputEl.value)) {
-        this.selectedItems.add(this.inputEl.value);
-        this.itemPrefix = this.inputEl.value = '';
-      }
-    } else {
-      this.itemPrefix = this.inputEl.value;
-    }
+  onInputBlur() {
+    console.log('onInputBlur', this.inputEl.value);
+  }
+
+  onInputChanged() {
+    console.log('onInputChanged', this.inputEl.value);
+  }
+
+  onKeyPressed(event: KeyboardEvent) {
+    console.log('onKeyPressed', event.key);
+
   }
 
   onListItemClick(event: MouseEvent) {
     const itemClicked = (event.target as HTMLLIElement).textContent;
 
-    if (this.selectedItems.has(itemClicked)) {
-      this.selectedItems.delete(itemClicked);
+    if (itemClicked == 'Select all') {
+
     } else {
-      this.selectedItems.add(itemClicked);
+      if (this.selectedItems.has(itemClicked)) {
+        this.selectedItems.delete(itemClicked);
+      } else {
+        this.selectedItems.add(itemClicked);
+      }
     }
 
+    this.inputEl.value = Array.from(this.selectedItems).join(',');
     this.modified = !this.modified;
   }
 }
