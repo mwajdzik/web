@@ -44,6 +44,8 @@ button {
   position: absolute;
   min-width: 100%;
   top: 100%;
+  z-index: 100;
+  background-color: white;
 }
 
 .dropdown-menu {

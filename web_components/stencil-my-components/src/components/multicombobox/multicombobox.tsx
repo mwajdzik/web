@@ -5,7 +5,6 @@ import * as _ from 'lodash-es';
 * ToDo:
 *  select all
 *  validate - error
-*  disabled
 * */
 @Component({
   tag: 'ro-multi-combobox',
@@ -36,7 +35,7 @@ export class StockPrice {
     if (this.isOpened) {
       const filteredItems = _.filter(this.items, (item) => item.startsWith(this.itemPrefix));
 
-      if (filteredItems.length > 0) {
+      if (filteredItems.length > 0 && !this.disabled) {
         hasItems = true;
 
         dropdown = (
@@ -58,11 +57,13 @@ export class StockPrice {
     return [
       <div class={hasItems ? 'opened controls' : 'controls'}>
         <input type='text'
+               disabled={this.disabled}
                onBlur={this.onInputBlur.bind(this)}
                onChange={this.onInputChanged.bind(this)}
                onKeyUp={this.onKeyPressed.bind(this)}
                ref={el => this.inputEl = el}/>
         <button type='button'
+                disabled={this.disabled}
                 onClick={this.onButtonClick.bind(this)}
                 ref={el => this.buttonEl = el}>#
         </button>
