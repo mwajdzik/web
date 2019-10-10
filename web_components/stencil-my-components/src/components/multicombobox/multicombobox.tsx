@@ -1,4 +1,4 @@
-import {Component, Element, h, Prop, State} from '@stencil/core';
+import {Component, Element, Event, EventEmitter, h, Prop, State} from '@stencil/core';
 import * as _ from 'lodash-es';
 
 /*
@@ -6,13 +6,16 @@ import * as _ from 'lodash-es';
 *  validate - error
 *  react to keyboard changes
 *  virtual scrolling
+*  tests
 * */
 @Component({
   tag: 'ro-multi-combobox',
   styleUrl: './multicombobox.css',
   shadow: true
 })
-export class StockPrice {
+export class MultiCombobox {
+
+  static readonly SELECT_ALL = 'Select all';
 
   @Element() el: HTMLElement;
 
@@ -28,6 +31,10 @@ export class StockPrice {
 
   @Prop({mutable: true}) disabled = false;
   @Prop({mutable: true}) items: string[] = [];
+
+  @Event() selectionChanged: EventEmitter<Set<string>>;
+
+  // ------------------------------------------------------------------------------------
 
   render() {
     console.log('rendering...');
@@ -45,7 +52,7 @@ export class StockPrice {
         dropdown = (
           <div class="dropdown-menu">
             <ul onClick={this.onListItemClick.bind(this)}>
-              <li class={selectAllClazz}>Select all</li>
+              <li class={selectAllClazz}>{MultiCombobox.SELECT_ALL}</li>
               {_.map(filteredItems, (item, index) => {
                 const style = {'top': ((index + 1) * 30) + 'px'};
                 const clazz = this.selectedItems.has(item) ? 'selected' : '';
@@ -79,12 +86,18 @@ export class StockPrice {
     ]
   }
 
+  // ------------------------------------------------------------------------------------
+
   allItemsSelected() {
     return this.selectedItems.size == this.items.length;
   }
 
   onButtonClick(event: Event) {
     this.isOpened = !this.isOpened;
+    event.stopPropagation();
+  }
+
+  onInputClick(event: MouseEvent) {
     event.stopPropagation();
   }
 
@@ -96,19 +109,14 @@ export class StockPrice {
     console.log('onInputChanged', this.inputEl.value);
   }
 
-  onInputClick(event: MouseEvent) {
-    event.stopPropagation();
-  }
-
   onKeyPressed(event: KeyboardEvent) {
     console.log('onKeyPressed', event.key);
-
   }
 
   onListItemClick(event: MouseEvent) {
     const itemClicked = (event.target as HTMLLIElement).textContent;
 
-    if (itemClicked == 'Select all') {
+    if (itemClicked == MultiCombobox.SELECT_ALL) {
       if (this.allItemsSelected()) {
         this.selectedItems.clear();
       } else {
@@ -123,9 +131,14 @@ export class StockPrice {
     }
 
     this.inputEl.value = Array.from(this.selectedItems).join(',');
-    this.modified = !this.modified;
+    this.onSelectionChanged();
 
     event.stopPropagation();
+  }
+
+  onSelectionChanged() {
+    this.modified = !this.modified;
+    this.selectionChanged.emit(this.selectedItems);
   }
 
   closeComboBox() {

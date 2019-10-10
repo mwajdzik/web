@@ -27,6 +27,12 @@
     <ro-multi-combobox id="cb3"></ro-multi-combobox>
   </div>
 </div>
+
+<div style="margin-top: 300px;">
+  <div id="results1" style="min-height: 1em; margin: 60px; padding: 10px; border: 1px solid #ccc;"></div>
+  <div id="results3" style="min-height: 1em; margin: 60px; padding: 10px; border: 1px solid #ccc;"></div>
+</div>
+
 <script>
     const cb1 = document.querySelector('#cb1');
     const cb2 = document.querySelector('#cb2');
@@ -37,6 +43,14 @@
     cb1.items = items;
     cb2.items = items;
     cb3.items = items;
+
+    cb1.addEventListener('selectionChanged', (event) => {
+        document.querySelector('#results1').textContent = Array.from(event.detail).join(', ');
+    });
+
+    cb3.addEventListener('selectionChanged', (event) => {
+        document.querySelector('#results3').textContent = Array.from(event.detail).join(', ');
+    });
 </script>
 </body>
 </html>
