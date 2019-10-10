@@ -3,8 +3,8 @@ import * as _ from 'lodash-es';
 
 /*
 * ToDo:
-*  select all
 *  validate - error
+*  react to keyboard changes
 *  virtual scrolling
 * */
 @Component({
@@ -37,6 +37,7 @@ export class StockPrice {
 
     if (this.isOpened) {
       const filteredItems = _.filter(this.items, (item) => item.startsWith(this.itemPrefix));
+      const selectAllClazz = this.allItemsSelected() ? 'selected' : '';
 
       if (filteredItems.length > 0 && !this.disabled) {
         hasItems = true;
@@ -44,7 +45,7 @@ export class StockPrice {
         dropdown = (
           <div class="dropdown-menu">
             <ul onClick={this.onListItemClick.bind(this)}>
-              <li>Select all</li>
+              <li class={selectAllClazz}>Select all</li>
               {_.map(filteredItems, (item, index) => {
                 const style = {'top': ((index + 1) * 30) + 'px'};
                 const clazz = this.selectedItems.has(item) ? 'selected' : '';
@@ -78,6 +79,10 @@ export class StockPrice {
     ]
   }
 
+  allItemsSelected() {
+    return this.selectedItems.size == this.items.length;
+  }
+
   onButtonClick(event: Event) {
     this.isOpened = !this.isOpened;
     event.stopPropagation();
@@ -104,7 +109,11 @@ export class StockPrice {
     const itemClicked = (event.target as HTMLLIElement).textContent;
 
     if (itemClicked == 'Select all') {
-
+      if (this.allItemsSelected()) {
+        this.selectedItems.clear();
+      } else {
+        this.items.forEach(item => this.selectedItems.add(item));
+      }
     } else {
       if (this.selectedItems.has(itemClicked)) {
         this.selectedItems.delete(itemClicked);
