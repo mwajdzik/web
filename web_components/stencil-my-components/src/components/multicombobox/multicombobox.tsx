@@ -5,6 +5,7 @@ import * as _ from 'lodash-es';
 * ToDo:
 *  select all
 *  validate - error
+*  virtual scrolling
 * */
 @Component({
   tag: 'ro-multi-combobox',
@@ -18,6 +19,8 @@ export class StockPrice {
   inputEl: HTMLInputElement;
   buttonEl: HTMLButtonElement;
 
+  closeComboBoxEventListener: EventListener;
+
   @State() modified = false;
   @State() isOpened = false;
   @State() itemPrefix = '';
@@ -27,7 +30,7 @@ export class StockPrice {
   @Prop({mutable: true}) items: string[] = [];
 
   render() {
-    console.log('render()');
+    console.log('rendering...');
 
     let dropdown;
     let hasItems = false;
@@ -60,6 +63,7 @@ export class StockPrice {
                disabled={this.disabled}
                onBlur={this.onInputBlur.bind(this)}
                onChange={this.onInputChanged.bind(this)}
+               onClick={this.onInputClick.bind(this)}
                onKeyUp={this.onKeyPressed.bind(this)}
                ref={el => this.inputEl = el}/>
         <button type='button'
@@ -74,8 +78,9 @@ export class StockPrice {
     ]
   }
 
-  onButtonClick() {
+  onButtonClick(event: Event) {
     this.isOpened = !this.isOpened;
+    event.stopPropagation();
   }
 
   onInputBlur() {
@@ -84,6 +89,10 @@ export class StockPrice {
 
   onInputChanged() {
     console.log('onInputChanged', this.inputEl.value);
+  }
+
+  onInputClick(event: MouseEvent) {
+    event.stopPropagation();
   }
 
   onKeyPressed(event: KeyboardEvent) {
@@ -106,5 +115,22 @@ export class StockPrice {
 
     this.inputEl.value = Array.from(this.selectedItems).join(',');
     this.modified = !this.modified;
+
+    event.stopPropagation();
+  }
+
+  closeComboBox() {
+    if (this.isOpened) {
+      this.isOpened = false;
+    }
+  }
+
+  componentDidLoad() {
+    this.closeComboBoxEventListener = this.closeComboBox.bind(this);
+    document.addEventListener('click', this.closeComboBoxEventListener);
+  }
+
+  componentDidUnload() {
+    document.removeEventListener('click', this.closeComboBoxEventListener);
   }
 }
