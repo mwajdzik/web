@@ -36,11 +36,11 @@ export class MultiCombobox {
   @Watch('items')
   itemsChanged(newValue: string, oldValue: string) {
     if (newValue !== oldValue) {
-      this.init();
+      this._init();
     }
   }
 
-  init() {
+  _init() {
     this.itemsSet = new Set<string>(this.items);
     this.selectedItems = new Set<string>();
     this.isOpened = false;
@@ -219,7 +219,7 @@ export class MultiCombobox {
   }
 
   componentDidLoad() {
-    this.init();
+    this._init();
 
     this.closeComboBoxEventListener = this._closeComboBox.bind(this);
     document.addEventListener('click', this.closeComboBoxEventListener);
