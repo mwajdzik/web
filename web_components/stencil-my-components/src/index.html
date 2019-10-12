@@ -24,19 +24,23 @@
     <ro-multi-combobox id="cb2" disabled></ro-multi-combobox>
   </div>
   <div style="width: 300px; height: 40px;">
-    <ro-multi-combobox id="cb3"></ro-multi-combobox>
+    <ro-multi-combobox id="cb3" required></ro-multi-combobox>
   </div>
 </div>
 
 <div style="margin-top: 300px;">
   <div id="results1" style="min-height: 1em; margin: 60px; padding: 10px; border: 1px solid #ccc;"></div>
   <div id="results3" style="min-height: 1em; margin: 60px; padding: 10px; border: 1px solid #ccc;"></div>
+  <div>
+    <button id="replaceItems" style="margin-left: 60px;">Replace Items</button>
+  </div>
 </div>
 
 <script>
     const cb1 = document.querySelector('#cb1');
     const cb2 = document.querySelector('#cb2');
     const cb3 = document.querySelector('#cb3');
+    const replaceItems = document.querySelector('#replaceItems');
 
     const items = ['AAB', 'AAR', 'AAV', 'AAX', 'AAY', 'AAZ', 'ABA', 'ABB', 'ABC', 'ABD', 'ABE', 'ABF', 'ABG', 'ABH', 'ABI', 'ABJ', 'ABK', 'ABL', 'ABM', 'ABN', 'ABO', 'ABP', 'ABQ', 'ABR', 'ABS', 'ABT', 'ABU', 'ABV', 'ABW', 'ABX', 'ABY', 'ABZ', 'ACA', 'ACB', 'ACC', 'ACD', 'ACE', 'ACH', 'ACI', 'ACJ', 'ACK', 'ACL', 'ACM', 'ACN', 'ACO', 'ACP', 'ACR', 'ACS', 'ACT', 'ACU', 'ACV', 'ACX', 'ACY', 'ACZ', 'ADA', 'ADB', 'ADD', 'ADE', 'ADF', 'ADG', 'ADH', 'ADI', 'ADJ', 'ADK', 'ADL', 'ADM', 'ADN', 'ADO', 'ADP', 'ADQ', 'ADR', 'ADS', 'ADT', 'ADU', 'ADV', 'ADW', 'ADX', 'ADY', 'ADZ', 'AEA', 'AEB', 'AEE', 'AEG', 'AEH', 'AEK', 'AEL', 'AEO', 'AEP', 'AER', 'AES', 'AET', 'AEU', 'AEX', 'AEY', 'AFA', 'AFD', 'AFF', 'AFI', 'AFK', 'AFL', 'AFN', 'AFO', 'AFR', 'AFS', 'AFT', 'AFW', 'AFY', 'AFZ', 'AGA', 'AGB', 'AGC', 'AGD', 'AGE', 'AGF', 'AGG', 'AGH', 'AGI', 'AGJ', 'AGK', 'AGL', 'AGM', 'AGN', 'AGO', 'AGP', 'AGQ', 'AGR', 'AGS', 'AGT', 'AGU', 'AGV', 'AHE', 'AHH', 'AHJ', 'AHS', 'AHW', 'AHZ', 'AID', 'AIE', 'AIF', 'AIG', 'AII', 'AIK', 'AIR', 'AIT', 'AIV', 'AIZ', 'ALB', 'ALC', 'ALD', 'ALE', 'ALF', 'ALG', 'ALH', 'ALI', 'ALJ', 'ALK', 'ALL', 'ALM', 'ALN', 'ALO', 'ALP', 'ALQ', 'ALR', 'ALS', 'ALT', 'ALU', 'ALV', 'ALW', 'ALX', 'ALY', 'ALZ', 'AMA', 'AMB', 'AMC', 'AMD', 'AME', 'AMF', 'AMG', 'AMH', 'AMI', 'AMJ', 'AMK', 'AML', 'AMM', 'AMN', 'AMO', 'AMP', 'AMQ', 'AMR', 'AMS', 'AMT', 'AMU', 'AMV', 'AMW', 'AMX', 'AMY', 'AMZ', 'ANA', 'ANB', 'ANC', 'AND', 'ANE', 'ANF', 'ANG', 'ANI', 'ANJ', 'ANK', 'ANL', 'ANM', 'ANN', 'ANO', 'ANP', 'ANQ', 'ANR', 'ANS', 'ANT', 'ANU', 'ANV', 'ANW', 'ANX', 'ANY', 'ANZ', 'AOA', 'AOB', 'AOC', 'AOD', 'AOE', 'AOG', 'AOH', 'AOI', 'AOJ', 'AOK', 'AOM', 'AOO', 'ARC', 'ARD', 'ARF', 'ARH', 'ARJ', 'ARL', 'ARN', 'ARP', 'ARR', 'ART', 'ARV', 'ARW', 'ARY', 'ARZ', 'ASA', 'ASB', 'ASC', 'ASD', 'ASE', 'ASF', 'ASG', 'ASH', 'ASI', 'ASM', 'ASN', 'ASO', 'ASP', 'ASQ', 'ASR', 'AST', 'ASV', 'ASX', 'ASZ', 'ATB', 'ATG', 'ATH', 'ATJ', 'ATL', 'ATN', 'ATP', 'ATY', 'AUV', 'AUW', 'AUX', 'AUZ', 'AVB', 'AVG', 'AVK', 'AVN', 'AVP', 'AVV', 'AVX', 'AWM', 'AWN', 'AWP', 'AWR', 'AWZ', 'AXA', 'AXB', 'AXC', 'AXF', 'AXJ', 'AXL', 'AXN', 'AXR', 'AXT', 'AXV', 'AYA', 'AYD', 'AYI', 'BAM', 'BAP', 'BAR', 'BAY', 'BBA', 'BBC', 'BBE', 'BBS', 'BBU', 'BBW', 'BBX', 'BBY', 'BBZ', 'BCA', 'BCB', 'BCC', 'BCD', 'BCE', 'BCG', 'BCI', 'BCK', 'BCL', 'BCM', 'BCN', 'BCO', 'BCP', 'BCQ', 'BCR', 'BCS', 'BCT', 'BCU', 'BCV', 'BCW', 'BCX', 'BCY', 'BCZ', 'BDA', 'BDB', 'BDC', 'BDD', 'BDE', 'BDF', 'BDG', 'BDH', 'BDI', 'BDJ', 'BDK', 'BDL', 'BDM', 'BDN', 'BDO', 'BDP', 'BDQ', 'BDR', 'BDS', 'BDT', 'BDU', 'BDV', 'BDW', 'BDX', 'BDY', 'BDZ', 'BEA', 'BEB', 'BEC', 'BED', 'BEE', 'BEF', 'BEG', 'BEH', 'BEI', 'BEJ', 'BEK', 'BEL', 'BEM', 'BEN', 'BEO', 'BEP', 'BEQ', 'BER', 'BES', 'BET', 'BEU', 'BEV', 'BEW', 'BEX', 'BEY', 'BEZ', 'BFA', 'BFC', 'BFD', 'BFE', 'BFF', 'BFG', 'BFI', 'BFJ', 'BFK', 'BFL', 'BFM', 'BFN', 'BFO', 'BFP', 'BFQ', 'BFR', 'BFS', 'BFT', 'BFU', 'BFV', 'BFX', 'BGA', 'BGB', 'BGC', 'BGD', 'BGE', 'BGF', 'BGG', 'BGH', 'BGI', 'BGJ', 'BGK', 'BGL', 'BGM', 'BGN', 'BGO', 'BGP', 'BGQ', 'BGR', 'BGT', 'BGU', 'BGV', 'BGW', 'BGX', 'BGY', 'BGZ', 'BHA', 'BHB', 'BHC', 'BHD', 'BHE', 'BHF', 'BHG', 'BHH', 'BHI', 'BHJ', 'BHK', 'BHL', 'BHM', 'BHN', 'BHO', 'BHP', 'BHQ', 'BHR', 'BHT', 'BHU', 'BHW', 'BHY', 'BIA', 'BID', 'BIF', 'BIH', 'BIJ', 'BIK', 'BIL', 'BIO', 'BIX', 'BIY', 'BIZ', 'BJA', 'BJB', 'BJC', 'BJD', 'BJE', 'BJF', 'BJG', 'BJH', 'BJI', 'BJJ', 'BJK', 'BJL', 'BJM', 'BJN', 'BJO', 'BJQ', 'BJR', 'BJS', 'BJT', 'BJU', 'BJV', 'BJW', 'BJX', 'BJY', 'BJZ', 'BKB', 'BKC', 'BKD', 'BKE'];
 
@@ -50,6 +54,10 @@
 
     cb3.addEventListener('selectionChanged', (event) => {
         document.querySelector('#results3').textContent = Array.from(event.detail).join(', ');
+    });
+
+    replaceItems.addEventListener('click', (event) => {
+        cb1.items = ['ZZA', 'ZZB', 'ZZP', 'ZZR', 'ZZZ'];
     });
 </script>
 </body>

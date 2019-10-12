@@ -1,13 +1,6 @@
-import {Component, Element, Event, EventEmitter, h, Prop, State} from '@stencil/core';
-import * as _ from 'lodash-es';
+import {Component, Element, Event, EventEmitter, h, Prop, State, Watch} from '@stencil/core';
+import {filter, map} from "lodash-es";
 
-/*
-* ToDo:
-*  validate - error
-*  react to keyboard changes
-*  virtual scrolling
-*  tests
-* */
 @Component({
   tag: 'ro-multi-combobox',
   styleUrl: './multicombobox.css',
@@ -22,38 +15,63 @@ export class MultiCombobox {
   inputEl: HTMLInputElement;
   buttonEl: HTMLButtonElement;
 
-  closeComboBoxEventListener: EventListener;
-
   @State() modified = false;
+  @State() error = false;
   @State() isOpened = false;
   @State() itemPrefix = '';
   @State() selectedItems = new Set<string>();
 
+  itemsSet: Set<string>;
+
+  @Prop({mutable: true}) required = false;
   @Prop({mutable: true}) disabled = false;
   @Prop({mutable: true}) items: string[] = [];
 
   @Event() selectionChanged: EventEmitter<Set<string>>;
 
+  closeComboBoxEventListener: EventListener;
+
   // ------------------------------------------------------------------------------------
 
-  render() {
-    console.log('rendering...');
+  @Watch('items')
+  stockSymbolChanged(newValue: string, oldValue: string) {
+    if (newValue !== oldValue) {
+      this.init();
+    }
+  }
 
+  init() {
+    this.itemsSet = new Set<string>(this.items);
+    this.selectedItems = new Set<string>();
+    this.isOpened = false;
+    this.itemPrefix = '';
+
+    this._adjustValueInInputField();
+    this._onSelectionChanged();
+  }
+
+  // ------------------------------------------------------------------------------------
+
+  hostData() {
+    if (this.required && this.selectedItems.size == 0) {
+      this.error = true;
+    }
+  }
+
+  render() {
     let dropdown;
-    let hasItems = false;
 
     if (this.isOpened) {
-      const filteredItems = _.filter(this.items, (item) => item.startsWith(this.itemPrefix));
-      const selectAllClazz = this.allItemsSelected() ? 'selected' : '';
+      const filteredItems = this._getFilteredItems();
+      const selectAllClazz = this._allItemsSelected() ? 'selected' : '';
+      const dropdownNeeded = filteredItems.length > 0 && !this.disabled;
 
-      if (filteredItems.length > 0 && !this.disabled) {
-        hasItems = true;
-
+      if (dropdownNeeded) {
         dropdown = (
           <div class="dropdown-menu">
             <ul onClick={this.onListItemClick.bind(this)}>
               <li class={selectAllClazz}>{MultiCombobox.SELECT_ALL}</li>
-              {_.map(filteredItems, (item, index) => {
+              {map(filteredItems, (item, index) => {
                 const style = {'top': ((index + 1) * 30) + 'px'};
                 const clazz = this.selectedItems.has(item) ? 'selected' : '';
 
@@ -66,11 +84,9 @@ export class MultiCombobox {
     }
 
     return [
-      <div class={hasItems ? 'opened controls' : 'controls'}>
+      <div class={this._buildComboboxClasses(dropdown !== undefined)}>
         <input type='text'
                disabled={this.disabled}
-               onBlur={this.onInputBlur.bind(this)}
-               onChange={this.onInputChanged.bind(this)}
                onClick={this.onInputClick.bind(this)}
                onKeyUp={this.onKeyPressed.bind(this)}
                ref={el => this.inputEl = el}/>
@@ -88,7 +104,29 @@ export class MultiCombobox {
 
   // ------------------------------------------------------------------------------------
 
-  allItemsSelected() {
+  _getFilteredItems() {
+    if (!this.itemPrefix) {
+      return this.items;
+    }
+
+    return filter(this.items, (item) => item.startsWith(this.itemPrefix))
+  }
+
+  _buildComboboxClasses(hasFilteredItems: boolean) {
+    let result = 'controls';
+
+    if (hasFilteredItems) {
+      result += ' opened';
+    }
+
+    if (this.error) {
+      result += ' error';
+    }
+
+    return result;
+  }
+
+  _allItemsSelected() {
     return this.selectedItems.size == this.items.length;
   }
 
@@ -101,23 +139,49 @@ export class MultiCombobox {
     event.stopPropagation();
   }
 
-  onInputBlur() {
-    console.log('onInputBlur', this.inputEl.value);
-  }
-
-  onInputChanged() {
-    console.log('onInputChanged', this.inputEl.value);
-  }
-
   onKeyPressed(event: KeyboardEvent) {
-    console.log('onKeyPressed', event.key);
+    console.log(event);
+
+    this.error = false;
+    this.isOpened = true;
+    let newSelectedItems = new Set<string>();
+
+    const text = this.inputEl.value;
+    const cursorPosition = this.inputEl.selectionStart;
+
+    let comma1 = text.lastIndexOf(',', cursorPosition - 1);
+    let comma2 = text.indexOf(',', cursorPosition);
+
+    if (comma2 == -1) {
+      comma2 = text.length;
+    }
+
+    this.itemPrefix = text.substr(comma1 + 1, comma2 - comma1 - 1).trim();
+
+    if (this.itemsSet.has(this.itemPrefix)) {
+      this.itemPrefix = '';
+    }
+
+    map(text.split(','), i => i.trim())
+      .forEach(i => {
+        if (this.itemsSet.has(i)) {
+          newSelectedItems.add(i);
+        } else if (i !== '') {
+          this.error = true;
+        }
+      });
+
+    this.selectedItems = newSelectedItems;
+    this._onSelectionChanged();
+
+    event.stopPropagation();
   }
 
   onListItemClick(event: MouseEvent) {
     const itemClicked = (event.target as HTMLLIElement).textContent;
 
     if (itemClicked == MultiCombobox.SELECT_ALL) {
-      if (this.allItemsSelected()) {
+      if (this._allItemsSelected()) {
         this.selectedItems.clear();
       } else {
         this.items.forEach(item => this.selectedItems.add(item));
@@ -130,13 +194,18 @@ export class MultiCombobox {
       }
     }
 
-    this.inputEl.value = Array.from(this.selectedItems).join(',');
-    this.onSelectionChanged();
+    this._adjustValueInInputField();
+    this._onSelectionChanged();
 
     event.stopPropagation();
   }
 
-  onSelectionChanged() {
+  _adjustValueInInputField() {
+    this.inputEl.value = Array.from(this.selectedItems).join(',');
+    this.error = false;
+  }
+
+  _onSelectionChanged() {
     this.modified = !this.modified;
     this.selectionChanged.emit(this.selectedItems);
   }
@@ -148,6 +217,8 @@ export class MultiCombobox {
   }
 
   componentDidLoad() {
+    this.init();
+
     this.closeComboBoxEventListener = this.closeComboBox.bind(this);
     document.addEventListener('click', this.closeComboBoxEventListener);
   }
