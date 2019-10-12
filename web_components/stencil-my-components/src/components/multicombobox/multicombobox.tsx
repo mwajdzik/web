@@ -15,8 +15,8 @@ export class MultiCombobox {
   inputEl: HTMLInputElement;
   buttonEl: HTMLButtonElement;
 
-  @State() modified = false;
-  @State() error = false;
+  @State() forceRendering = false;
+  @State() errorFound = false;
   @State() isOpened = false;
   @State() itemPrefix = '';
   @State() selectedItems = new Set<string>();
@@ -34,7 +34,7 @@ export class MultiCombobox {
   // ------------------------------------------------------------------------------------
 
   @Watch('items')
-  stockSymbolChanged(newValue: string, oldValue: string) {
+  itemsChanged(newValue: string, oldValue: string) {
     if (newValue !== oldValue) {
       this.init();
     }
@@ -54,7 +54,7 @@ export class MultiCombobox {
 
   hostData() {
     if (this.required && this.selectedItems.size == 0) {
-      this.error = true;
+      this.errorFound = true;
     }
   }
 
@@ -119,7 +119,7 @@ export class MultiCombobox {
       result += ' opened';
     }
 
-    if (this.error) {
+    if (this.errorFound) {
       result += ' error';
     }
 
@@ -129,6 +129,33 @@ export class MultiCombobox {
   _allItemsSelected() {
     return this.selectedItems.size == this.items.length;
   }
+
+  _adjustValueInInputField() {
+    this.inputEl.value = Array.from(this.selectedItems).join(',');
+    this.errorFound = false;
+  }
+
+  _onSelectionChanged() {
+    this.forceRendering = !this.forceRendering;
+    this.selectionChanged.emit(this.selectedItems);
+  }
+
+  _getCurrentItem() {
+    const text = this.inputEl.value;
+    const cursorPosition = this.inputEl.selectionStart;
+
+    let prevComma = text.lastIndexOf(',', cursorPosition - 1);
+    let nextComma = text.indexOf(',', cursorPosition);
+
+    if (nextComma == -1) {
+      nextComma = text.length;
+    }
+
+    let item = text.substr(prevComma + 1, nextComma - prevComma - 1).trim();
+    return this.itemsSet.has(item) ? '' : item;
+  }
+
+  // ------------------------------------------------------------------------------------
 
   onButtonClick(event: Event) {
     this.isOpened = !this.isOpened;
@@ -140,34 +167,17 @@ export class MultiCombobox {
   }
 
   onKeyPressed(event: KeyboardEvent) {
-    console.log(event);
-
-    this.error = false;
+    this.errorFound = false;
     this.isOpened = true;
+    this.itemPrefix = this._getCurrentItem();
+
     let newSelectedItems = new Set<string>();
-
-    const text = this.inputEl.value;
-    const cursorPosition = this.inputEl.selectionStart;
-
-    let comma1 = text.lastIndexOf(',', cursorPosition - 1);
-    let comma2 = text.indexOf(',', cursorPosition);
-
-    if (comma2 == -1) {
-      comma2 = text.length;
-    }
-
-    this.itemPrefix = text.substr(comma1 + 1, comma2 - comma1 - 1).trim();
-
-    if (this.itemsSet.has(this.itemPrefix)) {
-      this.itemPrefix = '';
-    }
-
-    map(text.split(','), i => i.trim())
-      .forEach(i => {
-        if (this.itemsSet.has(i)) {
-          newSelectedItems.add(i);
-        } else if (i !== '') {
-          this.error = true;
+    map(this.inputEl.value.split(','), item => item.trim())
+      .forEach(item => {
+        if (this.itemsSet.has(item)) {
+          newSelectedItems.add(item);
+        } else if (item !== '') {
+          this.errorFound = true;
         }
       });
 
@@ -200,17 +210,9 @@ export class MultiCombobox {
     event.stopPropagation();
   }
 
-  _adjustValueInInputField() {
-    this.inputEl.value = Array.from(this.selectedItems).join(',');
-    this.error = false;
-  }
+  // ------------------------------------------------------------------------------------
 
-  _onSelectionChanged() {
-    this.modified = !this.modified;
-    this.selectionChanged.emit(this.selectedItems);
-  }
-
-  closeComboBox() {
+  _closeComboBox() {
     if (this.isOpened) {
       this.isOpened = false;
     }
@@ -219,7 +221,7 @@ export class MultiCombobox {
   componentDidLoad() {
     this.init();
 
-    this.closeComboBoxEventListener = this.closeComboBox.bind(this);
+    this.closeComboBoxEventListener = this._closeComboBox.bind(this);
     document.addEventListener('click', this.closeComboBoxEventListener);
   }
 
