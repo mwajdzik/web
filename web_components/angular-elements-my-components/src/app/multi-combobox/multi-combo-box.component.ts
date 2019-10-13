@@ -48,14 +48,14 @@ export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, O
   private inputEl: ElementRef;
 
   private errorFound = false;
-  private isOpened = false;
   private itemPrefix = '';
-  private selectedItems = new Set<string>();
 
-  private filteredItems: string[] = [];
-  private dropdownNeeded = false;
-  private dropdownClass = '';
-  private selectAllClazz = '';
+  public isOpened = false;
+  public selectedItems = new Set<string>();
+  public filteredItems: string[] = [];
+  public dropdownNeeded = false;
+  public dropdownClass = '';
+  public selectAllClazz = '';
 
   private itemsSet: Set<string>;
 
