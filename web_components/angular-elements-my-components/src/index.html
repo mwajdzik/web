@@ -1,27 +1,24 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="en">
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <title>Stencil Component Starter</title>
-
-  <script type="module" src="/build/stencil-new-version.esm.js"></script>
-  <script nomodule src="/build/stencil-new-version.js"></script>
-
+  <title>AngularElementsTest</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <style>
     body {
       font-family: 'Roboto', Helvetica, Arial, sans-serif
     }
   </style>
 </head>
-
 <body style="margin: 100px;">
 <div style="display: flex; justify-content: space-evenly;">
   <div style="width: 300px; height: 40px;">
     <ro-multi-combobox id="cb1"></ro-multi-combobox>
   </div>
   <div style="width: 300px; height: 40px;">
-    <ro-multi-combobox id="cb2" disabled></ro-multi-combobox>
+    <ro-multi-combobox id="cb2" disabled="disabled"></ro-multi-combobox>
   </div>
   <div style="width: 300px; height: 40px;">
     <ro-multi-combobox id="cb3"></ro-multi-combobox>
@@ -65,7 +62,7 @@
         replaceItems.addEventListener('click', (event) => {
             cb1.items = ['ZZA', 'ZZB', 'ZZP', 'ZZR', 'ZZZ'];
         });
-    }, 0);
+    }, 1000);
 </script>
 </body>
 </html>

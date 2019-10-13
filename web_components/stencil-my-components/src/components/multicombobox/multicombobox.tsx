@@ -12,8 +12,7 @@ export class MultiCombobox {
 
   @Element() el: HTMLElement;
 
-  inputEl: HTMLInputElement;
-  buttonEl: HTMLButtonElement;
+  private inputEl: HTMLInputElement;
 
   @State() forceRendering = false;
   @State() errorFound = false;
@@ -21,7 +20,7 @@ export class MultiCombobox {
   @State() itemPrefix = '';
   @State() selectedItems = new Set<string>();
 
-  itemsSet: Set<string>;
+  private itemsSet: Set<string>;
 
   @Prop({mutable: true}) required = false;
   @Prop({mutable: true}) disabled = false;
@@ -29,7 +28,7 @@ export class MultiCombobox {
 
   @Event() selectionChanged: EventEmitter<Set<string>>;
 
-  closeComboBoxEventListener: EventListener;
+  private closeComboBoxEventListener: EventListener;
 
   // ------------------------------------------------------------------------------------
 
@@ -92,8 +91,7 @@ export class MultiCombobox {
                ref={el => this.inputEl = el}/>
         <button type='button'
                 disabled={this.disabled}
-                onClick={this.onButtonClick.bind(this)}
-                ref={el => this.buttonEl = el}>#
+                onClick={this.onButtonClick.bind(this)}>#
         </button>
       </div>,
       <div class="dropdown">
