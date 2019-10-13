@@ -12,7 +12,6 @@ import {
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
-import {filter, map} from "lodash-es";
 
 @Component({
   selector: 'ro-multi-combobox',
@@ -112,7 +111,7 @@ export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, O
       return this.items;
     }
 
-    return filter(this.items, (item) => item.startsWith(this.itemPrefix))
+    return this.items.filter((item) => item.startsWith(this.itemPrefix))
   }
 
   _buildComboboxClasses(hasFilteredItems: boolean) {
@@ -173,8 +172,10 @@ export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, O
     this.isOpened = true;
     this.itemPrefix = this._getCurrentItem();
 
-    let newSelectedItems = new Set<string>();
-    map(this.inputEl.nativeElement.value.split(','), item => item.trim())
+    const newSelectedItems = new Set<string>();
+    const splitItems = this.inputEl.nativeElement.value.split(',');
+
+    splitItems.map(item => item.trim())
       .forEach(item => {
         if (this.itemsSet.has(item)) {
           newSelectedItems.add(item);

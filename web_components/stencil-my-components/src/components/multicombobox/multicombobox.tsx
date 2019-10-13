@@ -1,5 +1,4 @@
 import {Component, Element, Event, EventEmitter, h, Prop, State, Watch} from '@stencil/core';
-import {filter, map} from "lodash-es";
 
 @Component({
   tag: 'ro-multi-combobox',
@@ -70,7 +69,7 @@ export class MultiCombobox {
           <div class="dropdown-menu">
             <ul onClick={this.onListItemClick.bind(this)}>
               <li class={selectAllClazz}>{MultiCombobox.SELECT_ALL}</li>
-              {map(filteredItems, (item, index) => {
+              {filteredItems.map((item, index) => {
                 const style = {'top': ((index + 1) * 30) + 'px'};
                 const clazz = this.selectedItems.has(item) ? 'selected' : '';
 
@@ -107,7 +106,7 @@ export class MultiCombobox {
       return this.items;
     }
 
-    return filter(this.items, (item) => item.startsWith(this.itemPrefix))
+    return this.items.filter((item) => item.startsWith(this.itemPrefix))
   }
 
   _buildComboboxClasses(hasFilteredItems: boolean) {
@@ -169,8 +168,10 @@ export class MultiCombobox {
     this.isOpened = true;
     this.itemPrefix = this._getCurrentItem();
 
-    let newSelectedItems = new Set<string>();
-    map(this.inputEl.value.split(','), item => item.trim())
+    const newSelectedItems = new Set<string>();
+    const splitItems = this.inputEl.value.split(',');
+
+    splitItems.map(item => item.trim())
       .forEach(item => {
         if (this.itemsSet.has(item)) {
           newSelectedItems.add(item);
