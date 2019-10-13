@@ -88,17 +88,21 @@ export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, O
       this._adjustValueInInputField();
       this._onSelectionChanged();
     }
+
+    if (changes.required) {
+      this.required = true;
+    }
   }
 
   ngAfterContentChecked(): void {
+    if (this.required && this.selectedItems.size == 0) {
+      this.errorFound = true;
+    }
+
     this.filteredItems = this._getFilteredItems();
     this.dropdownNeeded = this.filteredItems.length > 0 && !this.disabled;
     this.selectAllClazz = this._allItemsSelected() ? 'selected' : '';
     this.dropdownClass = this._buildComboboxClasses(this.dropdownNeeded);
-
-    if (this.required && this.selectedItems.size == 0) {
-      this.errorFound = true;
-    }
   }
 
   // ------------------------------------------------------------------------------------
