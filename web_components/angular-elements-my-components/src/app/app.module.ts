@@ -1,7 +1,7 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {Injector, NgModule} from '@angular/core';
 
-import {MultiComboBoxComponent} from './button/multi-combo-box.component';
+import {MultiComboBoxComponent} from './multi-combobox/multi-combo-box.component';
 import {createCustomElement} from "@angular/elements";
 
 @NgModule({

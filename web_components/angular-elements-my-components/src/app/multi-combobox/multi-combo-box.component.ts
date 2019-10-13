@@ -4,9 +4,11 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
   ViewEncapsulation
 } from '@angular/core';
@@ -18,7 +20,7 @@ import {filter, map} from "lodash-es";
       <div [ngClass]="dropdownClass">
           <input type='text' #inputRef
                  (click)="onInputClick($event)"
-                 (keypress)="onKeyPressed($event)"
+                 (keyup)="onKeyPressed($event)"
                  [disabled]="disabled"/>
           <button type='button'
                   [disabled]="disabled"
@@ -39,7 +41,7 @@ import {filter, map} from "lodash-es";
   styleUrls: ['./multicombobox.component.css'],
   encapsulation: ViewEncapsulation.Native
 })
-export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, OnInit {
+export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, OnInit, OnChanges {
 
   readonly SELECT_ALL = 'Select All';
 
@@ -68,19 +70,7 @@ export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, O
 
   // ------------------------------------------------------------------------------------
 
-  _init() {
-    this.itemsSet = new Set<string>(this.items);
-    this.selectedItems = new Set<string>();
-    this.isOpened = false;
-    this.itemPrefix = '';
-
-    // this._adjustValueInInputField();
-    // this._onSelectionChanged();
-  }
-
   ngOnInit() {
-    this._init();
-
     this.closeComboBoxEventListener = this._closeComboBox.bind(this);
     document.addEventListener('click', this.closeComboBoxEventListener);
   }
@@ -89,6 +79,11 @@ export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, O
     document.removeEventListener('click', this.closeComboBoxEventListener);
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.items) {
+      this.itemsSet = new Set<string>(changes.items.currentValue);
+    }
+  }
 
   ngAfterContentChecked(): void {
     this.filteredItems = this._getFilteredItems();
