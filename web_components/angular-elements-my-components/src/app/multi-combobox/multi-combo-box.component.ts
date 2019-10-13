@@ -28,7 +28,7 @@ import {filter, map} from "lodash-es";
           </button>
       </div>
       <div class="dropdown">
-          <div class="dropdown-menu" *ngIf="isOpened">
+          <div class="dropdown-menu" *ngIf="isOpened && dropdownNeeded">
               <ul (click)="onListItemClick($event)">
                   <li [ngClass]="selectAllClazz">{{SELECT_ALL}}</li>
                   <li *ngFor="let item of filteredItems; let i = index"
@@ -82,6 +82,11 @@ export class MultiComboBoxComponent implements AfterContentChecked, OnDestroy, O
   ngOnChanges(changes: SimpleChanges) {
     if (changes.items) {
       this.itemsSet = new Set<string>(changes.items.currentValue);
+      this.selectedItems = new Set<string>();
+      this.isOpened = false;
+      this.itemPrefix = '';
+      this._adjustValueInInputField();
+      this._onSelectionChanged();
     }
   }
 
