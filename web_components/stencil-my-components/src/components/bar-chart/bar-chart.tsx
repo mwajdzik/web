@@ -1,4 +1,5 @@
 import {Component, Element, h} from '@stencil/core';
+import {select} from 'd3-selection';
 
 @Component({
   tag: 'ro-bar-chart',
@@ -8,6 +9,8 @@ import {Component, Element, h} from '@stencil/core';
 export class BarChart {
 
   @Element() el: HTMLElement;
+
+  data = [10, 20, 15, 6, 10, 20, 15, 6];
 
   render() {
     let loading = false;
@@ -33,5 +36,20 @@ export class BarChart {
         {captionSection || svgSection}
       </figure>
     ]
+  }
+
+  componentDidLoad() {
+    select(this.el.shadowRoot.querySelector('svg'))
+      .selectAll('rect')
+      .data(this.data)
+      .enter()
+      .append('rect')
+      .attr('fill', 'blue')
+      .attr('height', (d) => d * 15)
+      .attr('width', '80')
+      .attr('x', (_d, i) => i * 90)
+      .attr('y', (d) => 400 - d * 15)
+      .attr('rx', '5')
+      .attr('ry', '5');
   }
 }
