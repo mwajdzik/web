@@ -12,6 +12,7 @@ import {axisBottom, axisLeft} from 'd3-axis';
 type ValueType = {
   value: number,
   class: string
+  height?: number,
 }
 
 type DataType = {
@@ -44,7 +45,7 @@ export class BarChart {
       label: 'Feb'
     },
     {
-      bars: [{value: 74.48, class: 'current'}, {value: 49.57, class: 'expected'}],
+      bars: [{value: 49.57, class: 'current'}, {value: 74.48, class: 'expected'}],
       circles: [{value: 77.17, class: 'current-ref'}, {value: 47.18, class: 'final-ref'}],
       label: 'Mar'
     },
@@ -95,6 +96,15 @@ export class BarChart {
   }
 
   componentDidLoad() {
+    this.data.forEach(d => {
+      for (let i = 0; i < d.bars.length - 1; i++) {
+        if (i < d.bars.length && d.bars[i].value < d.bars[i + 1].value) {
+          d.bars[i].height = 4;
+        }
+        d.bars = d.bars.sort((a, b) => b.value - a.value);
+      }
+    });
+
     const clientWidth = 800;
     const clientHeight = 400;
     const marginAxis = 25;
@@ -154,7 +164,7 @@ export class BarChart {
       .enter()
       .append('rect')
       .attr('class', d => `${d.class} bar`)
-      .attr('height', (d) => height - this.y(d.value))
+      .attr('height', (d) => d.height || (height - this.y(d.value)))
       .attr('width', this.x.bandwidth())
       .attr('y', (d) => this.y(d.value))
       .attr('rx', '3')
