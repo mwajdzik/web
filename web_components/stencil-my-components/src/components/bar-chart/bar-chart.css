@@ -31,3 +31,20 @@ svg {
   stroke: #ffab00;
   stroke-width: 3;
 }
+
+.bar.current {
+  fill: #6fa8dc;
+}
+
+.bar.expected {
+  fill: #376092;
+}
+
+.circle.current-ref {
+  fill: #ffffff;
+  stroke: #000000;
+}
+
+.circle.final-ref {
+  fill: #000000;
+}
