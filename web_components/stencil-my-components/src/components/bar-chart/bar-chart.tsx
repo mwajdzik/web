@@ -3,10 +3,17 @@ import {select} from 'd3-selection';
 import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
 import {max} from 'd3-array';
 import {axisBottom, axisLeft} from 'd3-axis';
+import {curveMonotoneX, line} from 'd3-shape';
 
 // todo:
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
+
+type DataType = {
+  bar: number,
+  circle: number,
+  label: string
+};
 
 @Component({
   tag: 'ro-bar-chart',
@@ -20,7 +27,7 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
-  data = [
+  data: DataType[] = [
     {bar: 5, circle: 10, label: 'AAA'},
     {bar: 10, circle: 20, label: 'BBB'},
     {bar: 20, circle: 30, label: 'CCC'},
@@ -95,6 +102,11 @@ export class BarChart {
       .domain([0, maxValue])
       .range([height, 0]);
 
+    const linePath = line<DataType>()
+      .x((d) => this.x(d.label))
+      .y((d) => this.y(d.circle))
+      .curve(curveMonotoneX);
+
     const stacks = groups
       .selectAll('g.stack')
       .data(this.data)
@@ -117,6 +129,12 @@ export class BarChart {
       .attr('y', (d) => this.y(d.bar))
       .attr('rx', '3')
       .attr('ry', '3');
+
+    groups.append('path')
+      .datum(this.data)
+      .attr('class', 'line')
+      .attr("transform", "translate(" + this.x.bandwidth() / 2 + ", 0)")
+      .attr('d', linePath);
 
     stacks
       .insert('circle')
