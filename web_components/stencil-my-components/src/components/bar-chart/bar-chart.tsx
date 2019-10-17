@@ -35,40 +35,37 @@ export class BarChart {
   @Prop({mutable: true}) data: DataType[];
 
   render() {
-    let loading = false;
-
-    let captionSection;
-    let svgSection;
-
-    if (loading) {
-      captionSection = (
-        <div class='caption'>
-          <p>Loading...</p>
-        </div>
+    if (!this.data) {
+      return (
+        <figure>
+          <div class='caption'>
+            <p>No data</p>
+          </div>
+        </figure>
       );
     } else {
-      svgSection = (
-        <svg xmlns='http://www.w3.org/2000/svg'>
-          <g class='chart'>
-            <g class='pre-data'/>
-            <g class='group-data'>
-              <g class='group-axes'/>
-              <g class='groups'/>
+      return (
+        <figure>
+          <svg xmlns='http://www.w3.org/2000/svg'>
+            <g class='chart'>
+              <g class='pre-data'/>
+              <g class='group-data'>
+                <g class='group-axes'/>
+                <g class='groups'/>
+              </g>
+              <g class='post-data'/>
             </g>
-            <g class='post-data'/>
-          </g>
-        </svg>
-      )
+          </svg>
+        </figure>
+      );
     }
-
-    return [
-      <figure>
-        {captionSection || svgSection}
-      </figure>
-    ]
   }
 
   componentDidLoad() {
+    if (!this.data) {
+      return;
+    }
+
     this.data.forEach(d => {
       for (let i = 0; i < d.bars.length - 1; i++) {
         if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
