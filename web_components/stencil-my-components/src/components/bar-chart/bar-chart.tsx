@@ -5,6 +5,7 @@ import {max, min} from 'd3-array';
 import {axisBottom, axisLeft} from 'd3-axis';
 
 // todo:
+// http://bl.ocks.org/alansmithy/e984477a741bc56db5a5
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
@@ -35,6 +36,8 @@ export class BarChart {
   @Prop({mutable: true}) data: DataType[];
 
   render() {
+    console.log('rendering', this.data);
+
     if (!this.data) {
       return (
         <figure>
@@ -62,6 +65,12 @@ export class BarChart {
   }
 
   componentDidLoad() {
+    this.componentDidUpdate();
+  }
+
+  componentDidUpdate() {
+    console.log('Component did load!');
+
     if (!this.data) {
       return;
     }
@@ -159,7 +168,7 @@ export class BarChart {
       .attr('class', d => `${d.class} circle`)
       .attr('cx', this.x.bandwidth() / 2)
       .attr('cy', (d) => this.y(d.value))
-      .attr('r', 8);
+      .attr('r', this.x.bandwidth() / 12);
 
     // groups.append('path')
     //   .datum(this.data)
