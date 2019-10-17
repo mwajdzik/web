@@ -1,4 +1,4 @@
-import {Component, Element, h} from '@stencil/core';
+import {Component, Element, h, Prop} from '@stencil/core';
 import {event, select} from 'd3-selection';
 import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
 import {max, min} from 'd3-array';
@@ -7,15 +7,14 @@ import {axisBottom, axisLeft} from 'd3-axis';
 // todo:
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
-// negative values
 
-type ValueType = {
+export type ValueType = {
   value: number,
   class: string
   covered?: boolean,
 }
 
-type DataType = {
+export type DataType = {
   bars: ValueType[],
   circles: ValueType[],
   label: string
@@ -33,38 +32,7 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
-  data: DataType[] = [
-    {
-      bars: [{value: 84.98, class: 'current'}, {value: 55.57, class: 'expected'}],
-      circles: [{value: 56.99, class: 'current-ref'}, {value: 84.91, class: 'final-ref'}],
-      label: 'Jan'
-    },
-    {
-      bars: [{value: 84.48, class: 'current'}, {value: 42.57, class: 'expected'}],
-      circles: [{value: 42.68, class: 'current-ref'}, {value: 87.17, class: 'final-ref'}],
-      label: 'Feb'
-    },
-    {
-      bars: [{value: 49.57, class: 'current'}, {value: 74.48, class: 'expected'}],
-      circles: [{value: 77.17, class: 'current-ref'}, {value: 47.18, class: 'final-ref'}],
-      label: 'Mar'
-    },
-    {
-      bars: [{value: -20, class: 'current'}, {value: -10, class: 'expected'}],
-      circles: [{value: -1.17, class: 'current-ref'}, {value: -17.18, class: 'final-ref'}],
-      label: 'Apr'
-    },
-    {
-      bars: [{value: -10, class: 'current'}, {value: -20, class: 'expected'}],
-      circles: [{value: -5.17, class: 'current-ref'}, {value: -17.18, class: 'final-ref'}],
-      label: 'May'
-    },
-    {
-      bars: [{value: 84.48, class: 'current'}, {value: 49.57, class: 'expected'}],
-      circles: [{value: 71.17, class: 'current-ref'}, {value: 57.18, class: 'final-ref'}],
-      label: 'Jun'
-    }
-  ];
+  @Prop({mutable: true}) data: DataType[];
 
   render() {
     let loading = false;

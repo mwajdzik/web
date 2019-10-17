@@ -95,8 +95,47 @@
 <div style="border: 1px dashed darkorange; padding: 20px; margin: 20px; display: block;">
   <h3>Bar Chart</h3>
   <div style="width: 800px; height: 400px; background-color: lightcyan;">
-    <ro-bar-chart></ro-bar-chart>
+    <ro-bar-chart id="bar-chart-1"></ro-bar-chart>
   </div>
+
+  <script>
+      setTimeout(() => {
+          const barChart1 = document.querySelector('#bar-chart-1');
+
+          barChart1.data = [
+              {
+                  bars: [{value: 84.98, class: 'current'}, {value: 55.57, class: 'expected'}],
+                  circles: [{value: 56.99, class: 'current-ref'}, {value: 84.91, class: 'final-ref'}],
+                  label: 'Jan'
+              },
+              {
+                  bars: [{value: 84.48, class: 'current'}, {value: 42.57, class: 'expected'}],
+                  circles: [{value: 42.68, class: 'current-ref'}, {value: 87.17, class: 'final-ref'}],
+                  label: 'Feb'
+              },
+              {
+                  bars: [{value: 49.57, class: 'current'}, {value: 74.48, class: 'expected'}],
+                  circles: [{value: 77.17, class: 'current-ref'}, {value: 47.18, class: 'final-ref'}],
+                  label: 'Mar'
+              },
+              {
+                  bars: [{value: -20, class: 'current'}, {value: -10, class: 'expected'}],
+                  circles: [{value: -1.17, class: 'current-ref'}, {value: -17.18, class: 'final-ref'}],
+                  label: 'Apr'
+              },
+              {
+                  bars: [{value: -10, class: 'current'}, {value: -20, class: 'expected'}],
+                  circles: [{value: -5.17, class: 'current-ref'}, {value: -17.18, class: 'final-ref'}],
+                  label: 'May'
+              },
+              {
+                  bars: [{value: 84.48, class: 'current'}, {value: 49.57, class: 'expected'}],
+                  circles: [{value: 71.17, class: 'current-ref'}, {value: 57.18, class: 'final-ref'}],
+                  label: 'Jun'
+              }
+          ];
+      }, 0);
+  </script>
 </div>
 </body>
 </html>
