@@ -1,7 +1,7 @@
 import {Component, Element, h} from '@stencil/core';
 import {event, select} from 'd3-selection';
 import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
-import {max} from 'd3-array';
+import {max, min} from 'd3-array';
 import {axisBottom, axisLeft} from 'd3-axis';
 
 // todo:
@@ -12,7 +12,7 @@ import {axisBottom, axisLeft} from 'd3-axis';
 type ValueType = {
   value: number,
   class: string
-  height?: number,
+  covered?: boolean,
 }
 
 type DataType = {
@@ -50,14 +50,19 @@ export class BarChart {
       label: 'Mar'
     },
     {
-      bars: [{value: 94.48, class: 'current'}, {value: 79.57, class: 'expected'}],
-      circles: [{value: 77.17, class: 'current-ref'}, {value: 47.18, class: 'final-ref'}],
+      bars: [{value: -20, class: 'current'}, {value: -10, class: 'expected'}],
+      circles: [{value: -1.17, class: 'current-ref'}, {value: -17.18, class: 'final-ref'}],
       label: 'Apr'
+    },
+    {
+      bars: [{value: -10, class: 'current'}, {value: -20, class: 'expected'}],
+      circles: [{value: -5.17, class: 'current-ref'}, {value: -17.18, class: 'final-ref'}],
+      label: 'May'
     },
     {
       bars: [{value: 84.48, class: 'current'}, {value: 49.57, class: 'expected'}],
       circles: [{value: 71.17, class: 'current-ref'}, {value: 57.18, class: 'final-ref'}],
-      label: 'May'
+      label: 'Jun'
     }
   ];
 
@@ -98,10 +103,14 @@ export class BarChart {
   componentDidLoad() {
     this.data.forEach(d => {
       for (let i = 0; i < d.bars.length - 1; i++) {
-        if (i < d.bars.length && d.bars[i].value < d.bars[i + 1].value) {
-          d.bars[i].height = 4;
+        if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
+          d.bars[i].covered = true;
+          d.bars = d.bars.sort((a, b) => b.value - a.value);
         }
-        d.bars = d.bars.sort((a, b) => b.value - a.value);
+        if (i < d.bars.length && d.bars[i].value < 0 && d.bars[i + 1].value < d.bars[i].value) {
+          d.bars[i].covered = true;
+          d.bars = d.bars.sort((a, b) => a.value - b.value);
+        }
       }
     });
 
@@ -111,7 +120,9 @@ export class BarChart {
     const margin = {top: 20, right: 20, bottom: 20, left: 20};
     const width = clientWidth - margin.left - margin.right;
     const height = clientHeight - margin.top - margin.bottom;
-    const maxValue = max(this.data, d => Math.max(...d.bars.map(i => i.value), ...d.bars.map(i => i.value)));
+
+    const minValue = min(this.data, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
+    const maxValue = max(this.data, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
 
     const svg = select(this.el.shadowRoot.querySelector('svg'));
     const chart = svg.select('.chart');
@@ -134,7 +145,7 @@ export class BarChart {
       .padding(0.1);
 
     this.y = scaleLinear()
-      .domain([0, maxValue])
+      .domain([Math.min(minValue, 0), Math.max(maxValue, 0)])
       .range([height, 0]);
 
     // const linePath1 = line<any>()
@@ -163,10 +174,15 @@ export class BarChart {
       .data(d => d.bars)
       .enter()
       .append('rect')
-      .attr('class', d => `${d.class} bar`)
-      .attr('height', (d) => d.height || (height - this.y(d.value)))
+      .attr('class', d => `${d.class} bar ${d.value < 0 ? 'negative' : ''}`)
+      .attr('height', (d) => d.covered ? 4 : Math.abs(this.y(0) - this.y(d.value)))
       .attr('width', this.x.bandwidth())
-      .attr('y', (d) => this.y(d.value))
+      .attr('y', (d) => {
+        if (d.value < 0) {
+          return this.y(d.covered ? d.value : Math.max(d.value, 0)) + 1;
+        }
+        return this.y(d.covered ? d.value : Math.max(d.value, 0))
+      })
       .attr('rx', '3')
       .attr('ry', '3');
 
@@ -178,7 +194,7 @@ export class BarChart {
       .attr('class', d => `${d.class} circle`)
       .attr('cx', this.x.bandwidth() / 2)
       .attr('cy', (d) => this.y(d.value))
-      .attr('r', 10);
+      .attr('r', 8);
 
     // groups.append('path')
     //   .datum(this.data)
@@ -193,7 +209,7 @@ export class BarChart {
 
     axes.append('g')
       .attr('class', 'x axis')
-      .attr('transform', `translate(${marginAxis}, ${height})`)
+      .attr('transform', `translate(${marginAxis}, ${this.y(0)})`)
       .call(axisBottom(this.x).tickFormat(d => d));
   }
 }

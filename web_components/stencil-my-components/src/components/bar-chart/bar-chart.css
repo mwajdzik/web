@@ -36,8 +36,16 @@ svg {
   fill: #6fa8dc;
 }
 
+.bar.current.negative {
+  fill: #e8d19a;
+}
+
 .bar.expected {
   fill: #376092;
+}
+
+.bar.expected.negative {
+  fill: #e79593;
 }
 
 .circle.current-ref {
