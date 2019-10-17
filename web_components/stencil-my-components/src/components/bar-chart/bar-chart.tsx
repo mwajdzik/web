@@ -2,10 +2,10 @@ import {Component, Element, h, Prop} from '@stencil/core';
 import {event, select} from 'd3-selection';
 import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
 import {max, min} from 'd3-array';
+import {transition} from 'd3-transition';
 import {axisBottom, axisLeft} from 'd3-axis';
 
 // todo:
-// http://bl.ocks.org/alansmithy/e984477a741bc56db5a5
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
@@ -36,8 +36,6 @@ export class BarChart {
   @Prop({mutable: true}) data: DataType[];
 
   render() {
-    console.log('rendering', this.data);
-
     if (!this.data) {
       return (
         <figure>
@@ -53,7 +51,10 @@ export class BarChart {
             <g class='chart'>
               <g class='pre-data'/>
               <g class='group-data'>
-                <g class='group-axes'/>
+                <g class='group-axes'>
+                  <g class='x axis'/>
+                  <g class='y axis'/>
+                </g>
                 <g class='groups'/>
               </g>
               <g class='post-data'/>
@@ -69,8 +70,6 @@ export class BarChart {
   }
 
   componentDidUpdate() {
-    console.log('Component did load!');
-
     if (!this.data) {
       return;
     }
@@ -127,11 +126,16 @@ export class BarChart {
     //   .y((d) => this.y(d.circle))
     //   .curve(curveMonotoneX);
 
-    const stacks = groups
+    let stacks = groups
       .selectAll('g.stack')
-      .data(this.data)
-      .enter()
+      .data(this.data);
+
+    stacks.exit()
+      .remove();
+
+    stacks.enter()
       .append('g')
+      .attr('class', 'stack')
       .attr('transform', d => `translate(${this.x(d.label)}, 0)`)
       .on('mouseover', (d) => {
         div.style('opacity', 0.9);
@@ -143,11 +147,23 @@ export class BarChart {
         div.style('opacity', 0);
       });
 
-    stacks
+    stacks = groups
+      .selectAll('g');
+
+    let bars = stacks
       .selectAll('rect')
-      .data(d => d.bars)
-      .enter()
-      .append('rect')
+      .data(d => d.bars);
+
+    bars.exit()
+      .remove();
+
+    bars.enter()
+      .append('rect');
+
+    bars = stacks
+      .selectAll('rect');
+
+    bars.transition(transition().duration(100))
       .attr('class', d => `${d.class} bar ${d.value < 0 ? 'negative' : ''}`)
       .attr('height', (d) => d.covered ? 4 : Math.abs(this.y(0) - this.y(d.value)))
       .attr('width', this.x.bandwidth())
@@ -160,11 +176,23 @@ export class BarChart {
       .attr('rx', '3')
       .attr('ry', '3');
 
-    stacks
+    stacks = groups
+      .selectAll('g');
+
+    let circles = stacks
       .selectAll('circle')
-      .data(d => d.circles)
-      .enter()
-      .append('circle')
+      .data(d => d.circles);
+
+    circles.exit()
+      .remove();
+
+    circles.enter()
+      .append('circle');
+
+    circles = stacks
+      .selectAll('circle');
+
+    circles.transition(transition().duration(100))
       .attr('class', d => `${d.class} circle`)
       .attr('cx', this.x.bandwidth() / 2)
       .attr('cy', (d) => this.y(d.value))
@@ -176,12 +204,12 @@ export class BarChart {
     //   .attr('transform', 'translate(' + this.x.bandwidth() / 2 + ', 0)')
     //   .attr('d', linePath1);
 
-    axes.append('g')
+    axes.select('.y.axis')
       .attr('class', 'y axis')
       .attr('transform', `translate(${marginAxis}, 0)`)
       .call(axisLeft(this.y));
 
-    axes.append('g')
+    axes.select('.x.axis')
       .attr('class', 'x axis')
       .attr('transform', `translate(${marginAxis}, ${this.y(0)})`)
       .call(axisBottom(this.x).tickFormat(d => d));

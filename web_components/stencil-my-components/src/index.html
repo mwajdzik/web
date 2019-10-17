@@ -103,8 +103,8 @@
 
   <script>
       function r() {
-          const min = -30;
-          const max = 100;
+          let min = -20 * Math.random();
+          let max = 100;
           return Math.random() * (max - min) + min;
       }
 
@@ -121,7 +121,6 @@
       setTimeout(() => {
           const barChart1 = document.querySelector('#bar-chart-1');
           const barChart1Button = document.querySelector('#bar-chart-1-button');
-
           barChart1.data = generateData();
 
           barChart1Button.addEventListener('click', () => {
