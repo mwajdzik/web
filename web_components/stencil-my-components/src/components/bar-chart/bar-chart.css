@@ -27,8 +27,15 @@ svg {
 
 .line {
   fill: none;
-  stroke: #ffab00;
-  stroke-width: 3;
+  stroke-width: 2;
+}
+
+.line-1 {
+  stroke: #a8b0c7;
+}
+
+.line-2 {
+  stroke: #e8c491;
 }
 
 .bar.current {

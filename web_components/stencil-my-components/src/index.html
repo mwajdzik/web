@@ -109,13 +109,22 @@
       }
 
       function generateData() {
-          return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(m => {
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+          const bars = months.map(m => {
               return {
+                  label: m,
                   bars: [{value: r(), class: 'current'}, {value: r(), class: 'expected'}],
-                  circles: [{value: r(), class: 'current-ref'}, {value: r(), class: 'final-ref'}],
-                  label: m
+                  circles: [{value: r(), class: 'current-ref'}, {value: r(), class: 'final-ref'}]
               }
-          })
+          });
+
+          const lines = [
+              {class: 'line-1', values: months.map(m => ({value: r(), label: m}))},
+              {class: 'line-2', values: months.map(m => ({value: r(), label: m}))},
+          ];
+
+          return {bars, lines}
       }
 
       setTimeout(() => {

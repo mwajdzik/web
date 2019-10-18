@@ -4,8 +4,10 @@ import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
 import {max, min} from 'd3-array';
 import {transition} from 'd3-transition';
 import {axisBottom, axisLeft} from 'd3-axis';
+import {curveMonotoneX, line} from 'd3-shape';
 
 // todo:
+// tooltip component
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
@@ -15,10 +17,25 @@ export type ValueType = {
   covered?: boolean,
 }
 
-export type DataType = {
+export type BarDataType = {
   bars: ValueType[],
   circles: ValueType[],
   label: string
+};
+
+export type LineElemType = {
+  value: number,
+  label: string
+};
+
+export type LineDataType = {
+  values: LineElemType[],
+  class: string
+};
+
+export type ChartDataType = {
+  bars: BarDataType[],
+  lines: LineDataType[]
 };
 
 @Component({
@@ -33,7 +50,7 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
-  @Prop({mutable: true}) data: DataType[];
+  @Prop({mutable: true}) data: ChartDataType;
 
   render() {
     if (!this.data) {
@@ -56,6 +73,7 @@ export class BarChart {
                   <g class='y axis'/>
                 </g>
                 <g class='groups'/>
+                <g class='lines'/>
               </g>
               <g class='post-data'/>
             </g>
@@ -74,7 +92,7 @@ export class BarChart {
       return;
     }
 
-    this.data.forEach(d => {
+    this.data.bars.forEach(d => {
       for (let i = 0; i < d.bars.length - 1; i++) {
         if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
           d.bars[i].covered = true;
@@ -94,12 +112,13 @@ export class BarChart {
     const width = clientWidth - margin.left - margin.right;
     const height = clientHeight - margin.top - margin.bottom;
 
-    const minValue = min(this.data, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
-    const maxValue = max(this.data, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
+    const minValue = min(this.data.bars, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
+    const maxValue = max(this.data.bars, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
 
     const svg = select(this.el.shadowRoot.querySelector('svg'));
     const chart = svg.select('.chart');
     const groups = svg.select('.group-data .groups');
+    const lines = svg.select('.group-data .lines');
     const axes = svg.select('.group-data .group-axes');
 
     const div = select('body').append('div')
@@ -112,8 +131,10 @@ export class BarChart {
 
     groups.attr('transform', `translate(${marginAxis}, 0)`);
 
+    console.log(this.data);
+
     this.x = scaleBand()
-      .domain(this.data.map((_, index) => `${this.data[index].label}`))
+      .domain(this.data.bars.map((_, index) => `${this.data.bars[index].label}`))
       .range([0, width - marginAxis])
       .padding(0.1);
 
@@ -121,14 +142,11 @@ export class BarChart {
       .domain([Math.min(minValue, 0), Math.max(maxValue, 0)])
       .range([height, 0]);
 
-    // const linePath1 = line<any>()
-    //   .x((d) => this.x(d.label))
-    //   .y((d) => this.y(d.circle))
-    //   .curve(curveMonotoneX);
+    // -----------------------------------------------------------------------------------------------------------------
 
     let stacks = groups
       .selectAll('g.stack')
-      .data(this.data);
+      .data(this.data.bars);
 
     stacks.exit()
       .remove();
@@ -149,6 +167,8 @@ export class BarChart {
 
     stacks = groups
       .selectAll('g');
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     let bars = stacks
       .selectAll('rect')
@@ -179,6 +199,8 @@ export class BarChart {
     stacks = groups
       .selectAll('g');
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     let circles = stacks
       .selectAll('circle')
       .data(d => d.circles);
@@ -198,11 +220,35 @@ export class BarChart {
       .attr('cy', (d) => this.y(d.value))
       .attr('r', this.x.bandwidth() / 12);
 
-    // groups.append('path')
-    //   .datum(this.data)
-    //   .attr('class', 'line')
-    //   .attr('transform', 'translate(' + this.x.bandwidth() / 2 + ', 0)')
-    //   .attr('d', linePath1);
+    // -----------------------------------------------------------------------------------------------------------------
+
+    const linePath = line<LineElemType>()
+      .x(d => this.x(d.label))
+      .y(d => this.y(d.value))
+      .curve(curveMonotoneX);
+
+    let allLines = lines
+      .selectAll('g.line')
+      .data(this.data.lines);
+
+    allLines.exit()
+      .remove();
+
+    allLines.enter()
+      .append('g')
+      .attr('class', d => `line ${d.class}`)
+      .append('path');
+
+    allLines = lines
+      .selectAll('g.line');
+
+    allLines.select('path')
+      .datum(d => d.values)
+      .transition(transition())
+      .attr('transform', `translate(${marginAxis + this.x.bandwidth() / 2}, 0)`)
+      .attr('d', linePath);
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     axes.select('.y.axis')
       .attr('class', 'y axis')
