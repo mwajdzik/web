@@ -12,7 +12,6 @@ import {curveMonotoneX, line} from 'd3-shape';
 // brush
 // right click - context menu
 // axis formatters
-// axis caption
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
@@ -77,6 +76,8 @@ export class BarChart {
                 <g class='group-axes'>
                   <g class='x axis'/>
                   <g class='y axis'/>
+                  <text class='x-axis-text'/>
+                  <text class='y-axis-text'/>
                 </g>
                 <g class='groups'/>
                 <g class='lines'/>
@@ -107,7 +108,7 @@ export class BarChart {
     const clientWidth = boundingClientRect.width;
     const clientHeight = boundingClientRect.height;
     const marginAxis = 25;
-    const margin = {top: 20, right: 20, bottom: 32, left: 20};
+    const margin = {top: 15, right: 15, bottom: 60, left: 40};
     const width = clientWidth - margin.left - margin.right;
     const height = clientHeight - margin.top - margin.bottom;
 
@@ -172,7 +173,6 @@ export class BarChart {
     stacks.enter()
       .append('g')
       .attr('class', 'stack')
-      .attr('transform', d => `translate(${this.x(d.label)}, 0)`)
       .on('mouseover', (d) => {
         div.style('opacity', 0.9);
         div.html('<p>' + d.label + '</p>')
@@ -185,6 +185,8 @@ export class BarChart {
 
     stacks = groups
       .selectAll('g');
+
+    stacks.attr('transform', d => `translate(${this.x(d.label)}, 0)`);
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -213,9 +215,6 @@ export class BarChart {
       })
       .attr('rx', '3')
       .attr('ry', '3');
-
-    stacks = groups
-      .selectAll('g');
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -282,5 +281,19 @@ export class BarChart {
       .selectAll('text')
       .attr('transform', ' translate(-15, 12) rotate(-45)')
       .style('font-size', '12px');
+
+    axes.select('.x-axis-text')
+      .attr('transform', `translate(${width / 2}, ${height + 55})`)
+      .style('text-anchor', 'middle')
+      .style('font-size', '14px')
+      .text('Month');
+
+    axes.select('.y-axis-text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', -30)
+      .attr('x', -(height / 2))
+      .attr('dy', '1em')
+      .style('text-anchor', 'middle')
+      .text('Value');
   }
 }
