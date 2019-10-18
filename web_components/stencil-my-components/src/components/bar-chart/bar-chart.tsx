@@ -55,6 +55,7 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
+  @Prop({mutable: true}) loading: boolean;
   @Prop({mutable: true}) data: ChartDataType;
 
   render() {
@@ -62,7 +63,7 @@ export class BarChart {
       return (
         <figure>
           <div class='caption'>
-            <p>No data</p>
+            <p>{this.loading ? 'Loading...' : 'No data'}</p>
           </div>
         </figure>
       );
@@ -93,27 +94,14 @@ export class BarChart {
   }
 
   componentDidUpdate() {
-    if (!this.data) {
-      return;
-    }
-
-    this.data.bars.forEach(d => {
-      for (let i = 0; i < d.bars.length - 1; i++) {
-        if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
-          d.bars[i].covered = true;
-          d.bars = d.bars.sort((a, b) => b.value - a.value);
-        }
-        if (i < d.bars.length && d.bars[i].value < 0 && d.bars[i + 1].value < d.bars[i].value) {
-          d.bars[i].covered = true;
-          d.bars = d.bars.sort((a, b) => a.value - b.value);
-        }
-      }
-    });
-
     const svg = select(this.el.shadowRoot.querySelector('svg'));
     const groups = svg.select('.group-data .groups');
     const lines = svg.select('.group-data .lines');
     const axes = svg.select('.group-data .group-axes');
+
+    if (!svg || !svg.node()) {
+      return;
+    }
 
     const boundingClientRect = svg.node().getBoundingClientRect();
     const clientWidth = boundingClientRect.width;
@@ -122,6 +110,25 @@ export class BarChart {
     const margin = {top: 20, right: 20, bottom: 32, left: 20};
     const width = clientWidth - margin.left - margin.right;
     const height = clientHeight - margin.top - margin.bottom;
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    if (this.data) {
+      this.data.bars.forEach(d => {
+        for (let i = 0; i < d.bars.length - 1; i++) {
+          if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
+            d.bars[i].covered = true;
+            d.bars = d.bars.sort((a, b) => b.value - a.value);
+          }
+          if (i < d.bars.length && d.bars[i].value < 0 && d.bars[i + 1].value < d.bars[i].value) {
+            d.bars[i].covered = true;
+            d.bars = d.bars.sort((a, b) => a.value - b.value);
+          }
+        }
+      });
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     const minValue = Math.floor(Math.min(
       min(this.data.bars, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))),

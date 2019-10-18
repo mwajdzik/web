@@ -104,6 +104,10 @@
   </div>
   <div style="display: block; border: 1px dashed orange;">
     <ro-bar-chart id="bar-chart-2" style="display: block; width: 800px; height: 400px;"></ro-bar-chart>
+    <div class="buttons">
+      <button id="bar-chart-2-button" style="margin: 10px 0">Load data</button>
+      <button id="bar-chart-3-button" style="margin: 10px 0">Clear data</button>
+    </div>
   </div>
 
   <script>
@@ -135,11 +139,23 @@
 
       setTimeout(() => {
           const barChart1 = document.querySelector('#bar-chart-1');
-          const barChart1Button = document.querySelector('#bar-chart-1-button');
+          const barChart2 = document.querySelector('#bar-chart-2');
           barChart1.data = generateData();
 
-          barChart1Button.addEventListener('click', () => {
+          document.querySelector('#bar-chart-1-button').addEventListener('click', () => {
               barChart1.data = generateData();
+          });
+
+          document.querySelector('#bar-chart-2-button').addEventListener('click', () => {
+              barChart2.loading = true;
+              setTimeout(() => {
+                  barChart2.loading = false;
+                  barChart2.data = generateData();
+              }, 500);
+          });
+
+          document.querySelector('#bar-chart-3-button').addEventListener('click', () => {
+              barChart2.data = null;
           });
       }, 0);
   </script>
