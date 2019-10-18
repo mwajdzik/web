@@ -8,6 +8,11 @@ import {curveMonotoneX, line} from 'd3-shape';
 
 // todo:
 // tooltip component
+// gaps
+// brush
+// right click - context menu
+// axis formatters
+// axis caption
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
@@ -105,27 +110,33 @@ export class BarChart {
       }
     });
 
-    const clientWidth = 800;
-    const clientHeight = 400;
-    const marginAxis = 25;
-    const margin = {top: 20, right: 20, bottom: 20, left: 20};
-    const width = clientWidth - margin.left - margin.right;
-    const height = clientHeight - margin.top - margin.bottom;
-
-    const minValue = min(this.data.bars, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
-    const maxValue = max(this.data.bars, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value)));
-
     const svg = select(this.el.shadowRoot.querySelector('svg'));
-    const chart = svg.select('.chart');
     const groups = svg.select('.group-data .groups');
     const lines = svg.select('.group-data .lines');
     const axes = svg.select('.group-data .group-axes');
+
+    const boundingClientRect = svg.node().getBoundingClientRect();
+    const clientWidth = boundingClientRect.width;
+    const clientHeight = boundingClientRect.height;
+    const marginAxis = 25;
+    const margin = {top: 20, right: 20, bottom: 32, left: 20};
+    const width = clientWidth - margin.left - margin.right;
+    const height = clientHeight - margin.top - margin.bottom;
+
+    const minValue = Math.floor(Math.min(
+      min(this.data.bars, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))),
+      min(this.data.lines, d => min(d.values.map(i => i.value)))) / 10) * 10;
+
+    const maxValue = Math.ceil(Math.max(
+      max(this.data.bars, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))),
+      max(this.data.lines, d => max(d.values.map(i => i.value)))) / 10) * 10;
 
     const div = select('body').append('div')
       .attr('class', 'tooltip')
       .style('opacity', 0);
 
-    chart.attr('height', height)
+    svg.select('.chart')
+      .attr('height', height)
       .attr('width', width - margin.left - margin.right)
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
@@ -257,12 +268,12 @@ export class BarChart {
 
     axes.select('.x.axis')
       .attr('class', 'x axis')
-      .attr('transform', `translate(${marginAxis}, ${this.y(0)})`)
+      .attr('transform', `translate(${marginAxis}, ${height})`)
       .call(axisBottom(this.x).tickFormat(d => d));
 
     axes.select('.x.axis')
       .selectAll('text')
-      .attr('transform',' translate(-20, 20) rotate(-45)')
-      .style('font-size','12px');
+      .attr('transform', ' translate(-15, 12) rotate(-45)')
+      .style('font-size', '12px');
   }
 }

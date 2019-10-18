@@ -29,6 +29,7 @@ svg {
 .line {
   fill: none;
   stroke-width: 2;
+  stroke: #6fa8dc;
 }
 
 .line-1 {
