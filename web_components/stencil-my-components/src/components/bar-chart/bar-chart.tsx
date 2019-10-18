@@ -12,6 +12,7 @@ import {curveMonotoneX, line} from 'd3-shape';
 // brush
 // right click - context menu
 // axis formatters
+// clean listeners
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
@@ -92,6 +93,10 @@ export class BarChart {
 
   componentDidLoad() {
     this.componentDidUpdate();
+
+    window.addEventListener('resize', () => {
+      this.componentDidUpdate();
+    });
   }
 
   componentDidUpdate() {
