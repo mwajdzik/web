@@ -131,7 +131,7 @@ export class BarChart {
 
     groups.attr('transform', `translate(${marginAxis}, 0)`);
 
-    console.log(this.data);
+    // -----------------------------------------------------------------------------------------------------------------
 
     this.x = scaleBand()
       .domain(this.data.bars.map((_, index) => `${this.data.bars[index].label}`))
@@ -259,5 +259,10 @@ export class BarChart {
       .attr('class', 'x axis')
       .attr('transform', `translate(${marginAxis}, ${this.y(0)})`)
       .call(axisBottom(this.x).tickFormat(d => d));
+
+    axes.select('.x.axis')
+      .selectAll('text')
+      .attr('transform',' translate(-20, 20) rotate(-45)')
+      .style('font-size','12px');
   }
 }
