@@ -58,6 +58,9 @@ export class BarChart {
   @Prop({mutable: true}) loading: boolean;
   @Prop({mutable: true}) data: ChartDataType;
 
+  private yGridLines = () =>
+    axisLeft(this.y).ticks(5);
+
   render() {
     if (!this.data) {
       return (
@@ -79,6 +82,7 @@ export class BarChart {
                   <g class='y axis'/>
                   <text class='x-axis-text'/>
                   <text class='y-axis-text'/>
+                  <g class='horizontal-lines'/>
                 </g>
                 <g class='groups'/>
                 <g class='lines'/>
@@ -300,5 +304,14 @@ export class BarChart {
       .attr('dy', '1em')
       .style('text-anchor', 'middle')
       .text('Value');
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    axes.select('.horizontal-lines')
+      .attr('class', 'grid')
+      .attr('transform', `translate(${marginAxis}, 0)`)
+      .call(this.yGridLines()
+        .tickSize(marginAxis - width)
+        .tickFormat(() => ''));
   }
 }

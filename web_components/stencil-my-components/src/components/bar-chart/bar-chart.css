@@ -64,3 +64,13 @@ svg {
 .circle.final-ref {
   fill: #000000;
 }
+
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.4;
+  shape-rendering: crispEdges
+}
+
+.grid path {
+  stroke-width: 0;
+}
