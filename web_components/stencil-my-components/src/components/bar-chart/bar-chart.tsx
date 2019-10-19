@@ -29,10 +29,14 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
-  @Prop({mutable: true}) height = 250;
+  private xAxisMargin = 25;
+
+  @Prop({mutable: true}) data: ChartDataType;
+  @Prop({mutable: true}) height = 400;
   @Prop({mutable: true}) loading = false;
   @Prop({mutable: true}) margins = {top: 20, bottom: 20, left: 20, right: 20};
-  @Prop({mutable: true}) data: ChartDataType;
+
+  // -------------------------------------------------------------------------------------------------------------------
 
   private yGridLines = () =>
     axisLeft(this.y).ticks(5);
@@ -55,9 +59,9 @@ export class BarChart {
               <g class='group-axes'>
                 <g class='x axis'/>
                 <g class='y axis'/>
+                <g class='grid'/>
                 <text class='x-axis-text'/>
                 <text class='y-axis-text'/>
-                <g class='grid'/>
               </g>
               <g class='groups'/>
               <g class='lines'/>
@@ -79,18 +83,21 @@ export class BarChart {
   }
 
   componentDidLoad() {
-    this.componentDidUpdate();
+    this.redrawChart();
 
     window.addEventListener('resize', () => {
-      this.componentDidUpdate();
+      this.redrawChart();
     });
   }
 
   componentDidUpdate() {
+    this.redrawChart();
+  }
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  redrawChart() {
     const svg = select(this.el.shadowRoot.querySelector('svg'));
-    const groups = svg.select('.group-data .groups');
-    const lines = svg.select('.group-data .lines');
-    const axes = svg.select('.group-data .group-axes');
 
     if (!svg || !svg.node() || !this.data) {
       return;
@@ -99,10 +106,6 @@ export class BarChart {
     const boundingClientRect = svg.node().getBoundingClientRect();
     const clientWidth = boundingClientRect.width;
     const clientHeight = this.height;
-    const marginAxis = 25;
-
-    console.log('width', clientWidth);
-
     const width = clientWidth - this.margins.left - this.margins.right;
     const height = clientHeight - this.margins.top - this.margins.bottom;
 
@@ -148,13 +151,14 @@ export class BarChart {
       .attr('width', width - this.margins.left - this.margins.right)
       .attr('transform', `translate(${this.margins.left}, ${this.margins.top})`);
 
-    groups.attr('transform', `translate(${marginAxis}, 0)`);
+    const groups = svg.select('.group-data .groups');
+    groups.attr('transform', `translate(${this.xAxisMargin}, 0)`);
 
     // -----------------------------------------------------------------------------------------------------------------
 
     this.x = scaleBand()
       .domain(this.data.labels)
-      .range([0, width - marginAxis])
+      .range([0, width - this.xAxisMargin])
       .padding(0.1);
 
     this.y = scaleLinear()
@@ -203,15 +207,13 @@ export class BarChart {
     bars = stacks
       .selectAll('rect');
 
-    bars.transition(transition().duration(100))
-      .attr('class', d => `${d.class} bar ${d.value < 0 ? 'negative' : ''}`)
+    bars.transition(transition())
+      .attr('class', d => `bar ${d.class} ${d.value < 0 ? 'negative' : ''}`)
       .attr('height', (d) => d.covered ? 4 : Math.abs(this.y(0) - this.y(d.value)))
       .attr('width', this.x.bandwidth())
       .attr('y', (d) => {
-        if (d.value < 0) {
-          return this.y(d.covered ? d.value : Math.max(d.value, 0)) + 1;
-        }
-        return this.y(d.covered ? d.value : Math.max(d.value, 0))
+        const shift = d.value < 0 ? 1 : 0;
+        return this.y(d.covered ? d.value : Math.max(d.value, 0)) + shift;
       })
       .attr('rx', '3')
       .attr('ry', '3');
@@ -231,13 +233,15 @@ export class BarChart {
     circles = stacks
       .selectAll('circle');
 
-    circles.transition(transition().duration(100))
+    circles.transition(transition())
       .attr('class', d => `${d.class} circle`)
       .attr('cx', this.x.bandwidth() / 2)
       .attr('cy', (d) => this.y(d.value))
       .attr('r', this.x.bandwidth() / 12);
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    const lines = svg.select('.group-data .lines');
 
     const linePath = line<LineElemType>()
       .x((_, i) => this.x(this.data.labels[i]))
@@ -262,24 +266,26 @@ export class BarChart {
     allLines.select('path')
       .datum(d => d.values)
       .transition(transition())
-      .attr('transform', `translate(${marginAxis + this.x.bandwidth() / 2}, 0)`)
+      .attr('transform', `translate(${this.xAxisMargin + this.x.bandwidth() / 2}, 0)`)
       .attr('d', linePath);
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    const axes = svg.select('.group-data .group-axes');
+
     axes.select('.y.axis')
       .attr('class', 'y axis')
-      .attr('transform', `translate(${marginAxis}, 0)`)
+      .attr('transform', `translate(${this.xAxisMargin}, 0)`)
       .call(axisLeft(this.y));
 
     axes.select('.x.axis')
       .attr('class', 'x axis')
-      .attr('transform', `translate(${marginAxis}, ${height})`)
+      .attr('transform', `translate(${this.xAxisMargin}, ${height})`)
       .call(axisBottom(this.x).tickFormat(d => d));
 
     axes.select('.x.axis')
       .selectAll('text')
-      .attr('transform', ' translate(-15, 12) rotate(-45)')
+      .attr('transform', 'translate(-15, 12) rotate(-45)')
       .style('font-size', '12px');
 
     axes.select('.x-axis-text')
@@ -299,9 +305,9 @@ export class BarChart {
     // -----------------------------------------------------------------------------------------------------------------
 
     axes.select('.grid')
-      .attr('transform', `translate(${marginAxis}, 0)`)
+      .attr('transform', `translate(${this.xAxisMargin}, 0)`)
       .call(this.yGridLines()
-        .tickSize(marginAxis - width)
+        .tickSize(this.xAxisMargin - width)
         .tickFormat(() => ''));
   }
 }
