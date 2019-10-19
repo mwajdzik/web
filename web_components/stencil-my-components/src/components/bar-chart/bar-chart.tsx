@@ -14,7 +14,6 @@ import {ChartDataType, LineElemType} from "./chart-model";
 // right click - context menu
 // axis formatters
 // clean listeners
-// https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
 @Component({
@@ -110,7 +109,7 @@ export class BarChart {
     const width = clientWidth - this.margins.left - this.margins.right;
     const height = clientHeight - this.margins.top - this.margins.bottom;
 
-    svg.style('width', clientWidth);
+    svg.style('width', this.fixedBarWidth ? clientWidth : '100%');
 
     // -----------------------------------------------------------------------------------------------------------------
 
