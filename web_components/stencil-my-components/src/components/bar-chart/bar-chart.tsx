@@ -285,7 +285,7 @@ export class BarChart {
 
     axes.select('.x.axis')
       .selectAll('text')
-      .attr('transform', 'translate(-15, 12) rotate(-45)')
+      .attr('transform', 'translate(-25, 20) rotate(-45)')
       .style('font-size', '12px');
 
     axes.select('.x-axis-text')
