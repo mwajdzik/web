@@ -5,6 +5,7 @@ import {max, min} from 'd3-array';
 import {transition} from 'd3-transition';
 import {axisBottom, axisLeft} from 'd3-axis';
 import {curveMonotoneX, line} from 'd3-shape';
+import {ChartDataType, LineElemType} from "./chart-model";
 
 // todo:
 // tooltip component
@@ -15,33 +16,6 @@ import {curveMonotoneX, line} from 'd3-shape';
 // clean listeners
 // https://github.com/mdbootstrap/perfect-scrollbar
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
-
-export type ValueType = {
-  value: number,
-  class: string
-  covered?: boolean,
-}
-
-export type BarDataType = {
-  bars: ValueType[],
-  circles: ValueType[],
-  label: string
-};
-
-export type LineElemType = {
-  value: number,
-  label: string
-};
-
-export type LineDataType = {
-  values: LineElemType[],
-  class: string
-};
-
-export type ChartDataType = {
-  bars: BarDataType[],
-  lines: LineDataType[]
-};
 
 @Component({
   tag: 'ro-bar-chart',
@@ -55,9 +29,9 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
-  @Prop({mutable: true}) height: number;
-  @Prop({mutable: true}) loading: boolean;
-  @Prop({mutable: true}) margins = {top: 0, bottom: 0, left: 0, right: 0};
+  @Prop({mutable: true}) height = 250;
+  @Prop({mutable: true}) loading = false;
+  @Prop({mutable: true}) margins = {top: 20, bottom: 20, left: 20, right: 20};
   @Prop({mutable: true}) data: ChartDataType;
 
   private yGridLines = () =>
@@ -83,7 +57,7 @@ export class BarChart {
                 <g class='y axis'/>
                 <text class='x-axis-text'/>
                 <text class='y-axis-text'/>
-                <g class='horizontal-lines'/>
+                <g class='grid'/>
               </g>
               <g class='groups'/>
               <g class='lines'/>
@@ -118,7 +92,7 @@ export class BarChart {
     const lines = svg.select('.group-data .lines');
     const axes = svg.select('.group-data .group-axes');
 
-    if (!svg || !svg.node()) {
+    if (!svg || !svg.node() || !this.data) {
       return;
     }
 
@@ -127,35 +101,43 @@ export class BarChart {
     const clientHeight = this.height;
     const marginAxis = 25;
 
+    console.log('width', clientWidth);
+
     const width = clientWidth - this.margins.left - this.margins.right;
     const height = clientHeight - this.margins.top - this.margins.bottom;
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    if (this.data) {
-      this.data.bars.forEach(d => {
-        for (let i = 0; i < d.bars.length - 1; i++) {
-          if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
-            d.bars[i].covered = true;
-            d.bars = d.bars.sort((a, b) => b.value - a.value);
-          }
-          if (i < d.bars.length && d.bars[i].value < 0 && d.bars[i + 1].value < d.bars[i].value) {
-            d.bars[i].covered = true;
-            d.bars = d.bars.sort((a, b) => a.value - b.value);
-          }
-        }
-      });
+    if (!this.data.stacks) {
+      this.data.stacks = [];
     }
+
+    if (!this.data.lines) {
+      this.data.lines = [];
+    }
+
+    this.data.stacks.forEach(d => {
+      for (let i = 0; i < d.bars.length - 1; i++) {
+        if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
+          d.bars[i].covered = true;
+          d.bars = d.bars.sort((a, b) => b.value - a.value);
+        }
+        if (i < d.bars.length && d.bars[i].value < 0 && d.bars[i + 1].value < d.bars[i].value) {
+          d.bars[i].covered = true;
+          d.bars = d.bars.sort((a, b) => a.value - b.value);
+        }
+      }
+    });
 
     // -----------------------------------------------------------------------------------------------------------------
 
     const minValue = Math.floor(Math.min(
-      min(this.data.bars, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))),
-      min(this.data.lines, d => min(d.values.map(i => i.value)))) / 10) * 10;
+      min(this.data.stacks, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
+      min(this.data.lines, d => min(d.values.map(i => i.value))) || 0) / 10) * 10;
 
     const maxValue = Math.ceil(Math.max(
-      max(this.data.bars, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))),
-      max(this.data.lines, d => max(d.values.map(i => i.value)))) / 10) * 10;
+      max(this.data.stacks, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
+      max(this.data.lines, d => max(d.values.map(i => i.value))) || 0) / 10) * 10;
 
     const div = select('body').append('div')
       .attr('class', 'tooltip')
@@ -171,7 +153,7 @@ export class BarChart {
     // -----------------------------------------------------------------------------------------------------------------
 
     this.x = scaleBand()
-      .domain(this.data.bars.map((_, index) => `${this.data.bars[index].label}`))
+      .domain(this.data.labels)
       .range([0, width - marginAxis])
       .padding(0.1);
 
@@ -183,7 +165,7 @@ export class BarChart {
 
     let stacks = groups
       .selectAll('g.stack')
-      .data(this.data.bars);
+      .data(this.data.stacks);
 
     stacks.exit()
       .remove();
@@ -191,9 +173,9 @@ export class BarChart {
     stacks.enter()
       .append('g')
       .attr('class', 'stack')
-      .on('mouseover', (d) => {
+      .on('mouseover', (_) => {
         div.style('opacity', 0.9);
-        div.html('<p>' + d.label + '</p>')
+        div.html('TEXT')
           .style('left', (event.pageX) + 'px')
           .style('top', (event.pageY - 10) + 'px');
       })
@@ -204,7 +186,7 @@ export class BarChart {
     stacks = groups
       .selectAll('g');
 
-    stacks.attr('transform', d => `translate(${this.x(d.label)}, 0)`);
+    stacks.attr('transform', (_, i) => `translate(${this.x(this.data.labels[i])}, 0)`);
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -258,7 +240,7 @@ export class BarChart {
     // -----------------------------------------------------------------------------------------------------------------
 
     const linePath = line<LineElemType>()
-      .x(d => this.x(d.label))
+      .x((_, i) => this.x(this.data.labels[i]))
       .y(d => this.y(d.value))
       .curve(curveMonotoneX);
 
@@ -316,8 +298,7 @@ export class BarChart {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    axes.select('.horizontal-lines')
-      .attr('class', 'grid')
+    axes.select('.grid')
       .attr('transform', `translate(${marginAxis}, 0)`)
       .call(this.yGridLines()
         .tickSize(marginAxis - width)

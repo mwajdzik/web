@@ -64,23 +64,31 @@
     <div style="display: flex; justify-content: space-evenly;">
       <div class="combobox-container">
         <ro-multi-combobox id="cb1"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+          explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+          voluptate.</p>
       </div>
       <div class="combobox-container">
         <ro-multi-combobox id="cb2" disabled="disabled"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+          explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+          voluptate.</p>
       </div>
       <div class="combobox-container">
         <ro-multi-combobox id="cb3"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+          explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+          voluptate.</p>
       </div>
       <div class="combobox-container">
         <ro-multi-combobox id="cb4" required="required"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+          explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+          voluptate.</p>
       </div>
     </div>
 
@@ -150,11 +158,22 @@
   <div class="chart-container" style="width: 100%;">
     <ro-bar-chart id="bar-chart-3" class="chart" height="400">
       <div slot="caption">
-        <h3>Chart #4</h3>
+        <h3>Chart #3</h3>
       </div>
     </ro-bar-chart>
     <div class="buttons">
       <button id="bar-chart-4-button">Reload</button>
+    </div>
+  </div>
+
+  <div class="chart-container" style="width: 100%;">
+    <ro-bar-chart id="bar-chart-4" class="chart" height="400">
+      <div slot="caption">
+        <h3>Chart #4</h3>
+      </div>
+    </ro-bar-chart>
+    <div class="buttons">
+      <button id="bar-chart-5-button">Reload</button>
     </div>
   </div>
 
@@ -163,44 +182,39 @@
           return Math.random() * (max - min) + min;
       }
 
-      function r() {
+      function value() {
           return random(-20 * Math.random(), 100);
       }
 
-      function generateData() {
+      function generateData(genStacks, genLines) {
           const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-          const bars = months.map(m => {
+          const stacks = months.map(m => {
               return {
-                  bars: [{value: r(), class: 'current'}, {value: r(), class: 'expected'}],
-                  circles: [{value: r(), class: 'current-ref'}, {value: r(), class: 'final-ref'}]
+                  bars: [{value: value(), class: 'current'}, {value: value(), class: 'expected'}],
+                  circles: [{value: value(), class: 'current-ref'}, {value: value(), class: 'final-ref'}]
               }
           });
 
           const lines = [...Array(Math.round(random(1, 3))).keys()].map((i) => {
-              return ({class: 'line-' + i, values: months.map(m => ({value: r()}))});
+              return ({class: 'line-' + i, values: months.map(m => ({value: value()}))});
           });
 
-          return {bars, lines, labels: months};
-      }
-
-      function generateDataLinesChart() {
-          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-          const lines = [...Array(Math.round(random(3, 6))).keys()].map((i) => {
-              return ({class: 'line-' + i, values: months.map(m => ({value: r()}))});
-          });
-
-          return {lines, labels: months};
+          return {
+              stacks: genStacks ? stacks : undefined,
+              lines: genLines ? lines : undefined,
+              labels: months
+          };
       }
 
       setTimeout(() => {
           // chart #1
           const barChart1 = document.querySelector('#bar-chart-1');
           barChart1.margins = {top: 15, right: 15, bottom: 60, left: 40};
-          barChart1.data = generateData();
+          barChart1.data = generateData(true, true);
 
           document.querySelector('#bar-chart-1-button').addEventListener('click', () => {
-              barChart1.data = generateData();
+              barChart1.data = generateData(true, true);
           });
 
           // chart #2
@@ -211,7 +225,7 @@
 
               setTimeout(() => {
                   barChart2.loading = false;
-                  barChart2.data = generateData();
+                  barChart2.data = generateData(true, true);
               }, 1000);
           });
 
@@ -222,11 +236,19 @@
           // chart #3
           const barChart3 = document.querySelector('#bar-chart-3');
           barChart3.margins = {top: 15, right: 15, bottom: 60, left: 40};
-          barChart3.data = generateDataLinesChart();
-          console.log(barChart3.data);
+          barChart3.data = generateData(false, true);
 
           document.querySelector('#bar-chart-4-button').addEventListener('click', () => {
-              barChart3.data = generateDataLinesChart();
+              barChart3.data = generateData(false, true);
+          });
+
+          // chart #4
+          const barChart4 = document.querySelector('#bar-chart-4');
+          barChart4.margins = {top: 15, right: 15, bottom: 60, left: 40};
+          barChart4.data = generateData(true, false);
+
+          document.querySelector('#bar-chart-5-button').addEventListener('click', () => {
+              barChart4.data = generateData(true, false);
           });
       }, 0);
   </script>
