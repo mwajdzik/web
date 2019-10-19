@@ -168,7 +168,7 @@
   </div>
 
   <div class="chart-container" style="width: 100%;">
-    <ro-bar-chart id="bar-chart-4" class="chart" height="400">
+    <ro-bar-chart id="bar-chart-4" class="chart" height="400" fixed-bar-width="80">
       <div slot="caption">
         <h3>Chart #4</h3>
       </div>
@@ -255,7 +255,7 @@
 
           // chart #4
           const barChart4 = document.querySelector('#bar-chart-4');
-          barChart4.margins = {top: 15, right: 15, bottom: 60, left: 40};
+          barChart4.margins = {top: 15, right: 15, bottom: 80, left: 40};
           barChart4.data = generateData(true, false, d1, d3);
 
           document.querySelector('#bar-chart-5-button').addEventListener('click', () => {

@@ -35,6 +35,7 @@ export class BarChart {
   @Prop({mutable: true}) height = 400;
   @Prop({mutable: true}) loading = false;
   @Prop({mutable: true}) margins = {top: 20, bottom: 20, left: 20, right: 20};
+  @Prop() fixedBarWidth: number;
 
   // -------------------------------------------------------------------------------------------------------------------
 
@@ -104,10 +105,12 @@ export class BarChart {
     }
 
     const boundingClientRect = svg.node().getBoundingClientRect();
-    const clientWidth = boundingClientRect.width;
+    const clientWidth = this.fixedBarWidth ? this.data.labels.length * this.fixedBarWidth : boundingClientRect.width;
     const clientHeight = this.height;
     const width = clientWidth - this.margins.left - this.margins.right;
     const height = clientHeight - this.margins.top - this.margins.bottom;
+
+    svg.style('width', clientWidth);
 
     // -----------------------------------------------------------------------------------------------------------------
 
