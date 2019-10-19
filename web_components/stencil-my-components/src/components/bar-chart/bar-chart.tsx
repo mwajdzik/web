@@ -55,44 +55,53 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
+  @Prop({mutable: true}) height: number;
   @Prop({mutable: true}) loading: boolean;
+  @Prop({mutable: true}) margins = {top: 0, bottom: 0, left: 0, right: 0};
   @Prop({mutable: true}) data: ChartDataType;
 
   private yGridLines = () =>
     axisLeft(this.y).ticks(5);
 
   render() {
+    let content;
+
     if (!this.data) {
-      return (
-        <figure>
-          <div class='caption'>
-            <p>{this.loading ? 'Loading...' : 'No data'}</p>
-          </div>
-        </figure>
+      content = (
+        <div class='caption'>
+          <p>{this.loading ? 'Loading...' : 'No data'}</p>
+        </div>
       );
     } else {
-      return (
-        <figure>
-          <svg xmlns='http://www.w3.org/2000/svg'>
-            <g class='chart'>
-              <g class='pre-data'/>
-              <g class='group-data'>
-                <g class='group-axes'>
-                  <g class='x axis'/>
-                  <g class='y axis'/>
-                  <text class='x-axis-text'/>
-                  <text class='y-axis-text'/>
-                  <g class='horizontal-lines'/>
-                </g>
-                <g class='groups'/>
-                <g class='lines'/>
+      content = (
+        <svg xmlns='http://www.w3.org/2000/svg'>
+          <g class='chart'>
+            <g class='pre-data'/>
+            <g class='group-data'>
+              <g class='group-axes'>
+                <g class='x axis'/>
+                <g class='y axis'/>
+                <text class='x-axis-text'/>
+                <text class='y-axis-text'/>
+                <g class='horizontal-lines'/>
               </g>
-              <g class='post-data'/>
+              <g class='groups'/>
+              <g class='lines'/>
             </g>
-          </svg>
-        </figure>
+            <g class='post-data'/>
+          </g>
+        </svg>
       );
     }
+
+    return [
+      <figcaption>
+        <slot name="caption"/>
+      </figcaption>,
+      <figure style={{'height': this.height + 'px'}}>
+        {content}
+      </figure>
+    ];
   }
 
   componentDidLoad() {
@@ -115,11 +124,11 @@ export class BarChart {
 
     const boundingClientRect = svg.node().getBoundingClientRect();
     const clientWidth = boundingClientRect.width;
-    const clientHeight = boundingClientRect.height;
+    const clientHeight = this.height;
     const marginAxis = 25;
-    const margin = {top: 15, right: 15, bottom: 60, left: 40};
-    const width = clientWidth - margin.left - margin.right;
-    const height = clientHeight - margin.top - margin.bottom;
+
+    const width = clientWidth - this.margins.left - this.margins.right;
+    const height = clientHeight - this.margins.top - this.margins.bottom;
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -154,8 +163,8 @@ export class BarChart {
 
     svg.select('.chart')
       .attr('height', height)
-      .attr('width', width - margin.left - margin.right)
-      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+      .attr('width', width - this.margins.left - this.margins.right)
+      .attr('transform', `translate(${this.margins.left}, ${this.margins.top})`);
 
     groups.attr('transform', `translate(${marginAxis}, 0)`);
 

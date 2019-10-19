@@ -30,62 +30,65 @@
       padding: 10px 20px;
     }
 
+    .buttons button {
+      margin: 10px 0;
+    }
+
     .combobox-container {
       width: 300px;
       height: 40px;
     }
 
     .component-container {
+      display: flex;
+      justify-content: space-between;
       border: 1px dashed darkorange;
       padding: 20px;
       margin: 20px;
     }
 
     .chart-container {
-      display: block;
-      width: 100%;
-      padding: 10px 25px;
+      width: 50%;
     }
 
     .chart {
-      display: block;
-      width: 100%;
-      height: 400px;
     }
   </style>
 </head>
 
 <body style="margin: 100px;">
 <div class="component-container">
-  <h3>MultiCombobox</h3>
-  <div style="display: flex; justify-content: space-evenly;">
-    <div class="combobox-container">
-      <ro-multi-combobox id="cb1"></ro-multi-combobox>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-        fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+  <div style="width: 100%">
+    <h3>MultiCombobox</h3>
+    <div style="display: flex; justify-content: space-evenly;">
+      <div class="combobox-container">
+        <ro-multi-combobox id="cb1"></ro-multi-combobox>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+      </div>
+      <div class="combobox-container">
+        <ro-multi-combobox id="cb2" disabled="disabled"></ro-multi-combobox>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+      </div>
+      <div class="combobox-container">
+        <ro-multi-combobox id="cb3"></ro-multi-combobox>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+      </div>
+      <div class="combobox-container">
+        <ro-multi-combobox id="cb4" required="required"></ro-multi-combobox>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
+          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
+      </div>
     </div>
-    <div class="combobox-container">
-      <ro-multi-combobox id="cb2" disabled="disabled"></ro-multi-combobox>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-        fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
-    </div>
-    <div class="combobox-container">
-      <ro-multi-combobox id="cb3"></ro-multi-combobox>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-        fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
-    </div>
-    <div class="combobox-container">
-      <ro-multi-combobox id="cb4" required="required"></ro-multi-combobox>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex explicabo
-        fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit voluptate.</p>
-    </div>
-  </div>
 
-  <div style="margin-top: 220px;">
-    <div id="results1" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
-    <div id="results4" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
-    <div>
-      <button id="replaceItems" style="margin-left: 20px;">Replace Items</button>
+    <div style="margin-top: 220px;">
+      <div id="results1" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+      <div id="results4" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+      <div>
+        <button id="replaceItems" style="margin-left: 20px;">Replace Items</button>
+      </div>
     </div>
   </div>
 
@@ -119,18 +122,27 @@
   </script>
 </div>
 
-<div class="component-container" style="display: flex; justify-content: space-evenly;">
+<div class="component-container">
   <div class="chart-container">
-    <ro-bar-chart id="bar-chart-1" class="chart"></ro-bar-chart>
+    <ro-bar-chart id="bar-chart-1" class="chart" height="400">
+      <div slot="caption">
+        <h3>Chart #1</h3>
+      </div>
+    </ro-bar-chart>
     <div class="buttons">
-      <button id="bar-chart-1-button" style="margin: 10px 0">Reload</button>
+      <button id="bar-chart-1-button">Reload</button>
     </div>
   </div>
+
   <div class="chart-container">
-    <ro-bar-chart id="bar-chart-2" class="chart"></ro-bar-chart>
+    <ro-bar-chart id="bar-chart-2" class="chart" height="400">
+      <div slot="caption">
+        <h3>Chart #2</h3>
+      </div>
+    </ro-bar-chart>
     <div class="buttons">
-      <button id="bar-chart-2-button" style="margin: 10px 0">Load data</button>
-      <button id="bar-chart-3-button" style="margin: 10px 0">Clear data</button>
+      <button id="bar-chart-2-button">Load data</button>
+      <button id="bar-chart-3-button">Clear data</button>
     </div>
   </div>
 
@@ -164,6 +176,8 @@
       setTimeout(() => {
           const barChart1 = document.querySelector('#bar-chart-1');
           const barChart2 = document.querySelector('#bar-chart-2');
+
+          barChart1.margins = {top: 15, right: 15, bottom: 60, left: 40};
           barChart1.data = generateData();
 
           document.querySelector('#bar-chart-1-button').addEventListener('click', () => {
@@ -172,6 +186,8 @@
 
           document.querySelector('#bar-chart-2-button').addEventListener('click', () => {
               barChart2.loading = true;
+              barChart2.margins = {top: 15, right: 15, bottom: 60, left: 40};
+
               setTimeout(() => {
                   barChart2.loading = false;
                   barChart2.data = generateData();
