@@ -1,18 +1,11 @@
-import {Component, Element, h, Prop} from '@stencil/core';
+import {Component, Element, Event, EventEmitter, h, Prop} from '@stencil/core';
 import {event, select} from 'd3-selection';
 import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
 import {max, min} from 'd3-array';
 import {transition} from 'd3-transition';
 import {axisBottom, axisLeft} from 'd3-axis';
 import {curveMonotoneX, line} from 'd3-shape';
-import {ChartDataType, LineElemType} from "./chart-model";
-
-// todo:
-// tooltip component
-// gaps
-// brush
-// right click - context menu
-// http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
+import {ChartDataType, ChartTooltipType, LineElemType} from "./chart-model";
 
 @Component({
   tag: 'ro-bar-chart',
@@ -35,6 +28,11 @@ export class BarChart {
   @Prop({mutable: true}) xAxisMargin = 25;
   @Prop({mutable: true}) yAxisMargin = 60;
   @Prop({mutable: true}) fixedBarWidth: number;
+
+  @Prop() tooltipContentProvider: any;
+  @Event({bubbles: true, composed: true}) roShowChartTooltip: EventEmitter<ChartTooltipType>;
+  @Event({bubbles: true, composed: true}) roHideChartTooltip: EventEmitter<ChartTooltipType>;
+  @Event({bubbles: true, composed: true}) roUpdatePositionChartTooltip: EventEmitter<ChartTooltipType>;
 
   private resizeEventListener: EventListenerOrEventListenerObject;
 
@@ -87,10 +85,7 @@ export class BarChart {
   componentDidLoad() {
     this.redrawChart();
 
-    this.resizeEventListener = () => {
-      this.redrawChart();
-    };
-
+    this.resizeEventListener = () => this.redrawChart();
     window.addEventListener('resize', this.resizeEventListener);
   }
 
@@ -152,10 +147,6 @@ export class BarChart {
       max(this.data.stacks, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
       max(this.data.lines, d => max(d.values.map(i => i.value))) || 0) / 10) * 10;
 
-    const div = select('body').append('div')
-      .attr('class', 'tooltip')
-      .style('opacity', 0);
-
     svg.select('.chart')
       .attr('height', height)
       .attr('width', width - this.margins.left - this.margins.right)
@@ -187,19 +178,30 @@ export class BarChart {
     stacks.enter()
       .append('g')
       .attr('class', 'stack')
-      .on('mouseover', (_) => {
-        div.style('opacity', 0.9);
-        div.html('TEXT')
-          .style('left', (event.pageX) + 'px')
-          .style('top', (event.pageY - 10) + 'px');
+      .on('mouseover', (d, i) => {
+        if (this.tooltipContentProvider) {
+          this.roShowChartTooltip.emit({
+            content: this.tooltipContentProvider(d, i),
+            eventX: event.pageX,
+            eventY: event.pageY
+          });
+        }
+      })
+      .on('mousemove', () => {
+        if (this.tooltipContentProvider) {
+          this.roUpdatePositionChartTooltip.emit({
+            eventX: event.pageX,
+            eventY: event.pageY
+          });
+        }
       })
       .on('mouseout', () => {
-        div.style('opacity', 0);
+        if (this.tooltipContentProvider) {
+          this.roHideChartTooltip.emit({});
+        }
       });
 
-    stacks = groups
-      .selectAll('g');
-
+    stacks = groups.selectAll('g');
     stacks.attr('transform', (_, i) => `translate(${this.x(this.data.labels[i])}, 0)`);
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -8,7 +8,40 @@
   <script type="module" src="/build/stencil-new-version.esm.js"></script>
   <script nomodule src="/build/stencil-new-version.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+  <script>
+      function tooltipContentProvider(d) {
+          const current = _.find(d.bars, ['class', 'current']);
+          const expected = _.find(d.bars, ['class', 'expected']);
+          const currentRef = _.find(d.circles, ['class', 'current-ref']);
+          const expectedRef = _.find(d.circles, ['class', 'final-ref']);
 
+          return `
+                <div class="chart-bar-tooltip">
+                    <h5 class="tooltip-title text-center">${d.label}</h5>
+                    <table class="table-tooltip-metrics">
+                        <tbody>
+                        <tr>
+                            <td class="td-metric">Curr</td>
+                            <td class="td-metric text-right">${current.value}</td>
+                        </tr>
+                        <tr>
+                            <td class="td-metric">Exp</td>
+                            <td class="td-metric text-right">${expected.value}</td>
+                        </tr>
+                        <tr>
+                            <td class="td-metric">Curr LY</td>
+                            <td class="td-metric text-right">${currentRef.value}</td>
+                        </tr>
+                        <tr>
+                            <td class="td-metric">Final LY</td>
+                            <td class="td-metric text-right">${expectedRef.value}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>`;
+      }
+  </script>
   <style>
     body {
       font-family: 'Roboto', Helvetica, Arial, sans-serif
@@ -45,7 +78,8 @@
   </style>
 </head>
 
-<body style="margin: 100px;">
+<body>
+<div style="margin: 100px;">
 <div class="component-container">
   <div style="width: 100%">
     <h3>MultiCombobox</h3>
@@ -191,7 +225,8 @@
           const stacks = dates.map(m => {
               return {
                   bars: [{value: value(), class: 'current'}, {value: value(), class: 'expected'}],
-                  circles: [{value: value(), class: 'current-ref'}, {value: value(), class: 'final-ref'}]
+                  circles: [{value: value(), class: 'current-ref'}, {value: value(), class: 'final-ref'}],
+                  label: m
               }
           });
 
@@ -215,6 +250,7 @@
           const barChart1 = document.querySelector('#bar-chart-1');
           barChart1.margins = {top: 15, right: 15, bottom: 80, left: 40};
           barChart1.data = generateData(true, true, d1, d2);
+          barChart1.tooltipContentProvider = tooltipContentProvider;
 
           document.querySelector('#bar-chart-1-button').addEventListener('click', () => {
               barChart1.data = generateData(true, true, d1, d2);
@@ -222,6 +258,7 @@
 
           // chart #2
           const barChart2 = document.querySelector('#bar-chart-2');
+
           document.querySelector('#bar-chart-2-button').addEventListener('click', () => {
               barChart2.loading = true;
               barChart2.margins = {top: 15, right: 15, bottom: 60, left: 40};
@@ -249,12 +286,14 @@
           const barChart4 = document.querySelector('#bar-chart-4');
           barChart4.margins = {top: 15, right: 15, bottom: 80, left: 40};
           barChart4.data = generateData(true, false, d1, d3);
+          barChart4.tooltipContentProvider = tooltipContentProvider;
 
           document.querySelector('#bar-chart-5-button').addEventListener('click', () => {
               barChart4.data = generateData(true, false, d1, d3);
           });
       }, 0);
   </script>
+</div>
 </div>
 
 <ro-tooltip></ro-tooltip>

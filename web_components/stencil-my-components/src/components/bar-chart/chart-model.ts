@@ -6,7 +6,8 @@ export type ValueType = {
 
 export type StacksDataType = {
   bars: ValueType[],
-  circles: ValueType[]
+  circles: ValueType[],
+  label: string
 };
 
 export type LineElemType = {
@@ -22,4 +23,10 @@ export type ChartDataType = {
   stacks: StacksDataType[],
   lines: LineDataType[],
   labels: string[]
+};
+
+export type ChartTooltipType = {
+  content?: string,
+  eventX?: number,
+  eventY?: number
 };
