@@ -17,25 +17,25 @@
           const expectedRef = _.find(d.circles, ['class', 'final-ref']);
 
           return `
-                <div class="chart-bar-tooltip">
-                    <h5 class="tooltip-title text-center">${d.label}</h5>
+                <div class="bar-chart-tooltip">
+                    <h5 class="tooltip-title">${d.label}</h5>
                     <table class="table-tooltip-metrics">
                         <tbody>
                         <tr>
                             <td class="td-metric">Curr</td>
-                            <td class="td-metric text-right">${current.value}</td>
+                            <td class="td-metric text-right">${current.value.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td class="td-metric">Exp</td>
-                            <td class="td-metric text-right">${expected.value}</td>
+                            <td class="td-metric text-right">${expected.value.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td class="td-metric">Curr LY</td>
-                            <td class="td-metric text-right">${currentRef.value}</td>
+                            <td class="td-metric text-right">${currentRef.value.toFixed(2)}</td>
                         </tr>
                         <tr>
                             <td class="td-metric">Final LY</td>
-                            <td class="td-metric text-right">${expectedRef.value}</td>
+                            <td class="td-metric text-right">${expectedRef.value.toFixed(2)}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -75,225 +75,231 @@
 
     .chart {
     }
+
+    .tooltip-title {
+      font-size: 15px;
+      text-align: center;
+      margin: 5px 0;
+    }
   </style>
 </head>
 
 <body>
 <div style="margin: 100px;">
-<div class="component-container">
-  <div style="width: 100%">
-    <h3>MultiCombobox</h3>
-    <div style="display: flex; justify-content: space-evenly;">
-      <div class="combobox-container">
-        <ro-multi-combobox id="cb1"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
-          explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
-          voluptate.</p>
+  <div class="component-container">
+    <div style="width: 100%">
+      <h3>MultiCombobox</h3>
+      <div style="display: flex; justify-content: space-evenly;">
+        <div class="combobox-container">
+          <ro-multi-combobox id="cb1"></ro-multi-combobox>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+            explicabo
+            fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+            voluptate.</p>
+        </div>
+        <div class="combobox-container">
+          <ro-multi-combobox id="cb2" disabled="disabled"></ro-multi-combobox>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+            explicabo
+            fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+            voluptate.</p>
+        </div>
+        <div class="combobox-container">
+          <ro-multi-combobox id="cb3"></ro-multi-combobox>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+            explicabo
+            fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+            voluptate.</p>
+        </div>
+        <div class="combobox-container">
+          <ro-multi-combobox id="cb4" required="required"></ro-multi-combobox>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
+            explicabo
+            fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
+            voluptate.</p>
+        </div>
       </div>
-      <div class="combobox-container">
-        <ro-multi-combobox id="cb2" disabled="disabled"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
-          explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
-          voluptate.</p>
-      </div>
-      <div class="combobox-container">
-        <ro-multi-combobox id="cb3"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
-          explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
-          voluptate.</p>
-      </div>
-      <div class="combobox-container">
-        <ro-multi-combobox id="cb4" required="required"></ro-multi-combobox>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam blanditiis cum eos error eveniet ex
-          explicabo
-          fugit ipsa ipsum labore magnam maiores necessitatibus nobis numquam optio quidem, recusandae sit
-          voluptate.</p>
+
+      <div style="margin-top: 220px;">
+        <div id="results1" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+        <div id="results4" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+        <div>
+          <button id="replaceItems" style="margin-left: 20px;">Replace Items</button>
+        </div>
       </div>
     </div>
 
-    <div style="margin-top: 220px;">
-      <div id="results1" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
-      <div id="results4" style="min-height: 1em; margin: 20px; padding: 10px; border: 1px solid #ccc;"></div>
-      <div>
-        <button id="replaceItems" style="margin-left: 20px;">Replace Items</button>
-      </div>
-    </div>
+    <script>
+        setTimeout(() => {
+            const cb1 = document.querySelector('#cb1');
+            const cb2 = document.querySelector('#cb2');
+            const cb3 = document.querySelector('#cb3');
+            const cb4 = document.querySelector('#cb4');
+            const replaceItems = document.querySelector('#replaceItems');
+
+            const items = ['AAB', 'AAR', 'AAV', 'AAX', 'AAY', 'AAZ', 'ABA', 'ABB', 'ABC', 'ABD', 'ABE', 'ABF', 'ABG', 'ABH', 'ABI', 'ABJ', 'ABK', 'ABL', 'ABM', 'ABN', 'ABO', 'ABP', 'ABQ', 'ABR', 'ABS', 'ABT', 'ABU', 'ABV', 'ABW', 'ABX', 'ABY', 'ABZ', 'ACA', 'ACB', 'ACC', 'ACD', 'ACE', 'ACH', 'ACI', 'ACJ', 'ACK', 'ACL', 'ACM', 'ACN', 'ACO', 'ACP', 'ACR', 'ACS', 'ACT', 'ACU', 'ACV', 'ACX', 'ACY', 'ACZ', 'ADA', 'ADB', 'ADD', 'ADE', 'ADF', 'ADG', 'ADH', 'ADI', 'ADJ', 'ADK', 'ADL', 'ADM', 'ADN', 'ADO', 'ADP', 'ADQ', 'ADR', 'ADS', 'ADT', 'ADU', 'ADV', 'ADW', 'ADX', 'ADY', 'ADZ', 'AEA', 'AEB', 'AEE', 'AEG', 'AEH', 'AEK', 'AEL', 'AEO', 'AEP', 'AER', 'AES', 'AET', 'AEU', 'AEX', 'AEY', 'AFA', 'AFD', 'AFF', 'AFI', 'AFK', 'AFL', 'AFN', 'AFO', 'AFR', 'AFS', 'AFT', 'AFW', 'AFY', 'AFZ', 'AGA', 'AGB', 'AGC', 'AGD', 'AGE', 'AGF', 'AGG', 'AGH', 'AGI', 'AGJ', 'AGK', 'AGL', 'AGM', 'AGN', 'AGO', 'AGP', 'AGQ', 'AGR', 'AGS', 'AGT', 'AGU', 'AGV', 'AHE', 'AHH', 'AHJ', 'AHS', 'AHW', 'AHZ', 'AID', 'AIE', 'AIF', 'AIG', 'AII', 'AIK', 'AIR', 'AIT', 'AIV', 'AIZ', 'ALB', 'ALC', 'ALD', 'ALE', 'ALF', 'ALG', 'ALH', 'ALI', 'ALJ', 'ALK', 'ALL', 'ALM', 'ALN', 'ALO', 'ALP', 'ALQ', 'ALR', 'ALS', 'ALT', 'ALU', 'ALV', 'ALW', 'ALX', 'ALY', 'ALZ', 'AMA', 'AMB', 'AMC', 'AMD', 'AME', 'AMF', 'AMG', 'AMH', 'AMI', 'AMJ', 'AMK', 'AML', 'AMM', 'AMN', 'AMO', 'AMP', 'AMQ', 'AMR', 'AMS', 'AMT', 'AMU', 'AMV', 'AMW', 'AMX', 'AMY', 'AMZ', 'ANA', 'ANB', 'ANC', 'AND', 'ANE', 'ANF', 'ANG', 'ANI', 'ANJ', 'ANK', 'ANL', 'ANM', 'ANN', 'ANO', 'ANP', 'ANQ', 'ANR', 'ANS', 'ANT', 'ANU', 'ANV', 'ANW', 'ANX', 'ANY', 'ANZ', 'AOA', 'AOB', 'AOC', 'AOD', 'AOE', 'AOG', 'AOH', 'AOI', 'AOJ', 'AOK', 'AOM', 'AOO', 'ARC', 'ARD', 'ARF', 'ARH', 'ARJ', 'ARL', 'ARN', 'ARP', 'ARR', 'ART', 'ARV', 'ARW', 'ARY', 'ARZ', 'ASA', 'ASB', 'ASC', 'ASD', 'ASE', 'ASF', 'ASG', 'ASH', 'ASI', 'ASM', 'ASN', 'ASO', 'ASP', 'ASQ', 'ASR', 'AST', 'ASV', 'ASX', 'ASZ', 'ATB', 'ATG', 'ATH', 'ATJ', 'ATL', 'ATN', 'ATP', 'ATY', 'AUV', 'AUW', 'AUX', 'AUZ', 'AVB', 'AVG', 'AVK', 'AVN', 'AVP', 'AVV', 'AVX', 'AWM', 'AWN', 'AWP', 'AWR', 'AWZ', 'AXA', 'AXB', 'AXC', 'AXF', 'AXJ', 'AXL', 'AXN', 'AXR', 'AXT', 'AXV', 'AYA', 'AYD', 'AYI', 'BAM', 'BAP', 'BAR', 'BAY', 'BBA', 'BBC', 'BBE', 'BBS', 'BBU', 'BBW', 'BBX', 'BBY', 'BBZ', 'BCA', 'BCB', 'BCC', 'BCD', 'BCE', 'BCG', 'BCI', 'BCK', 'BCL', 'BCM', 'BCN', 'BCO', 'BCP', 'BCQ', 'BCR', 'BCS', 'BCT', 'BCU', 'BCV', 'BCW', 'BCX', 'BCY', 'BCZ', 'BDA', 'BDB', 'BDC', 'BDD', 'BDE', 'BDF', 'BDG', 'BDH', 'BDI', 'BDJ', 'BDK', 'BDL', 'BDM', 'BDN', 'BDO', 'BDP', 'BDQ', 'BDR', 'BDS', 'BDT', 'BDU', 'BDV', 'BDW', 'BDX', 'BDY', 'BDZ', 'BEA', 'BEB', 'BEC', 'BED', 'BEE', 'BEF', 'BEG', 'BEH', 'BEI', 'BEJ', 'BEK', 'BEL', 'BEM', 'BEN', 'BEO', 'BEP', 'BEQ', 'BER', 'BES', 'BET', 'BEU', 'BEV', 'BEW', 'BEX', 'BEY', 'BEZ', 'BFA', 'BFC', 'BFD', 'BFE', 'BFF', 'BFG', 'BFI', 'BFJ', 'BFK', 'BFL', 'BFM', 'BFN', 'BFO', 'BFP', 'BFQ', 'BFR', 'BFS', 'BFT', 'BFU', 'BFV', 'BFX', 'BGA', 'BGB', 'BGC', 'BGD', 'BGE', 'BGF', 'BGG', 'BGH', 'BGI', 'BGJ', 'BGK', 'BGL', 'BGM', 'BGN', 'BGO', 'BGP', 'BGQ', 'BGR', 'BGT', 'BGU', 'BGV', 'BGW', 'BGX', 'BGY', 'BGZ', 'BHA', 'BHB', 'BHC', 'BHD', 'BHE', 'BHF', 'BHG', 'BHH', 'BHI', 'BHJ', 'BHK', 'BHL', 'BHM', 'BHN', 'BHO', 'BHP', 'BHQ', 'BHR', 'BHT', 'BHU', 'BHW', 'BHY', 'BIA', 'BID', 'BIF', 'BIH', 'BIJ', 'BIK', 'BIL', 'BIO', 'BIX', 'BIY', 'BIZ', 'BJA', 'BJB', 'BJC', 'BJD', 'BJE', 'BJF', 'BJG', 'BJH', 'BJI', 'BJJ', 'BJK', 'BJL', 'BJM', 'BJN', 'BJO', 'BJQ', 'BJR', 'BJS', 'BJT', 'BJU', 'BJV', 'BJW', 'BJX', 'BJY', 'BJZ', 'BKB', 'BKC', 'BKD', 'BKE'];
+
+            cb1.items = items;
+            cb2.items = items;
+            cb3.items = [];
+            cb4.items = items;
+
+            cb1.addEventListener('selectionChanged', (event) => {
+                document.querySelector('#results1').textContent = Array.from(event.detail).join(', ');
+            });
+
+            cb4.addEventListener('selectionChanged', (event) => {
+                document.querySelector('#results4').textContent = Array.from(event.detail).join(', ');
+            });
+
+            replaceItems.addEventListener('click', (event) => {
+                cb1.items = ['ZZA', 'ZZB', 'ZZP', 'ZZR', 'ZZZ'];
+            });
+        }, 0);
+    </script>
   </div>
 
-  <script>
-      setTimeout(() => {
-          const cb1 = document.querySelector('#cb1');
-          const cb2 = document.querySelector('#cb2');
-          const cb3 = document.querySelector('#cb3');
-          const cb4 = document.querySelector('#cb4');
-          const replaceItems = document.querySelector('#replaceItems');
-
-          const items = ['AAB', 'AAR', 'AAV', 'AAX', 'AAY', 'AAZ', 'ABA', 'ABB', 'ABC', 'ABD', 'ABE', 'ABF', 'ABG', 'ABH', 'ABI', 'ABJ', 'ABK', 'ABL', 'ABM', 'ABN', 'ABO', 'ABP', 'ABQ', 'ABR', 'ABS', 'ABT', 'ABU', 'ABV', 'ABW', 'ABX', 'ABY', 'ABZ', 'ACA', 'ACB', 'ACC', 'ACD', 'ACE', 'ACH', 'ACI', 'ACJ', 'ACK', 'ACL', 'ACM', 'ACN', 'ACO', 'ACP', 'ACR', 'ACS', 'ACT', 'ACU', 'ACV', 'ACX', 'ACY', 'ACZ', 'ADA', 'ADB', 'ADD', 'ADE', 'ADF', 'ADG', 'ADH', 'ADI', 'ADJ', 'ADK', 'ADL', 'ADM', 'ADN', 'ADO', 'ADP', 'ADQ', 'ADR', 'ADS', 'ADT', 'ADU', 'ADV', 'ADW', 'ADX', 'ADY', 'ADZ', 'AEA', 'AEB', 'AEE', 'AEG', 'AEH', 'AEK', 'AEL', 'AEO', 'AEP', 'AER', 'AES', 'AET', 'AEU', 'AEX', 'AEY', 'AFA', 'AFD', 'AFF', 'AFI', 'AFK', 'AFL', 'AFN', 'AFO', 'AFR', 'AFS', 'AFT', 'AFW', 'AFY', 'AFZ', 'AGA', 'AGB', 'AGC', 'AGD', 'AGE', 'AGF', 'AGG', 'AGH', 'AGI', 'AGJ', 'AGK', 'AGL', 'AGM', 'AGN', 'AGO', 'AGP', 'AGQ', 'AGR', 'AGS', 'AGT', 'AGU', 'AGV', 'AHE', 'AHH', 'AHJ', 'AHS', 'AHW', 'AHZ', 'AID', 'AIE', 'AIF', 'AIG', 'AII', 'AIK', 'AIR', 'AIT', 'AIV', 'AIZ', 'ALB', 'ALC', 'ALD', 'ALE', 'ALF', 'ALG', 'ALH', 'ALI', 'ALJ', 'ALK', 'ALL', 'ALM', 'ALN', 'ALO', 'ALP', 'ALQ', 'ALR', 'ALS', 'ALT', 'ALU', 'ALV', 'ALW', 'ALX', 'ALY', 'ALZ', 'AMA', 'AMB', 'AMC', 'AMD', 'AME', 'AMF', 'AMG', 'AMH', 'AMI', 'AMJ', 'AMK', 'AML', 'AMM', 'AMN', 'AMO', 'AMP', 'AMQ', 'AMR', 'AMS', 'AMT', 'AMU', 'AMV', 'AMW', 'AMX', 'AMY', 'AMZ', 'ANA', 'ANB', 'ANC', 'AND', 'ANE', 'ANF', 'ANG', 'ANI', 'ANJ', 'ANK', 'ANL', 'ANM', 'ANN', 'ANO', 'ANP', 'ANQ', 'ANR', 'ANS', 'ANT', 'ANU', 'ANV', 'ANW', 'ANX', 'ANY', 'ANZ', 'AOA', 'AOB', 'AOC', 'AOD', 'AOE', 'AOG', 'AOH', 'AOI', 'AOJ', 'AOK', 'AOM', 'AOO', 'ARC', 'ARD', 'ARF', 'ARH', 'ARJ', 'ARL', 'ARN', 'ARP', 'ARR', 'ART', 'ARV', 'ARW', 'ARY', 'ARZ', 'ASA', 'ASB', 'ASC', 'ASD', 'ASE', 'ASF', 'ASG', 'ASH', 'ASI', 'ASM', 'ASN', 'ASO', 'ASP', 'ASQ', 'ASR', 'AST', 'ASV', 'ASX', 'ASZ', 'ATB', 'ATG', 'ATH', 'ATJ', 'ATL', 'ATN', 'ATP', 'ATY', 'AUV', 'AUW', 'AUX', 'AUZ', 'AVB', 'AVG', 'AVK', 'AVN', 'AVP', 'AVV', 'AVX', 'AWM', 'AWN', 'AWP', 'AWR', 'AWZ', 'AXA', 'AXB', 'AXC', 'AXF', 'AXJ', 'AXL', 'AXN', 'AXR', 'AXT', 'AXV', 'AYA', 'AYD', 'AYI', 'BAM', 'BAP', 'BAR', 'BAY', 'BBA', 'BBC', 'BBE', 'BBS', 'BBU', 'BBW', 'BBX', 'BBY', 'BBZ', 'BCA', 'BCB', 'BCC', 'BCD', 'BCE', 'BCG', 'BCI', 'BCK', 'BCL', 'BCM', 'BCN', 'BCO', 'BCP', 'BCQ', 'BCR', 'BCS', 'BCT', 'BCU', 'BCV', 'BCW', 'BCX', 'BCY', 'BCZ', 'BDA', 'BDB', 'BDC', 'BDD', 'BDE', 'BDF', 'BDG', 'BDH', 'BDI', 'BDJ', 'BDK', 'BDL', 'BDM', 'BDN', 'BDO', 'BDP', 'BDQ', 'BDR', 'BDS', 'BDT', 'BDU', 'BDV', 'BDW', 'BDX', 'BDY', 'BDZ', 'BEA', 'BEB', 'BEC', 'BED', 'BEE', 'BEF', 'BEG', 'BEH', 'BEI', 'BEJ', 'BEK', 'BEL', 'BEM', 'BEN', 'BEO', 'BEP', 'BEQ', 'BER', 'BES', 'BET', 'BEU', 'BEV', 'BEW', 'BEX', 'BEY', 'BEZ', 'BFA', 'BFC', 'BFD', 'BFE', 'BFF', 'BFG', 'BFI', 'BFJ', 'BFK', 'BFL', 'BFM', 'BFN', 'BFO', 'BFP', 'BFQ', 'BFR', 'BFS', 'BFT', 'BFU', 'BFV', 'BFX', 'BGA', 'BGB', 'BGC', 'BGD', 'BGE', 'BGF', 'BGG', 'BGH', 'BGI', 'BGJ', 'BGK', 'BGL', 'BGM', 'BGN', 'BGO', 'BGP', 'BGQ', 'BGR', 'BGT', 'BGU', 'BGV', 'BGW', 'BGX', 'BGY', 'BGZ', 'BHA', 'BHB', 'BHC', 'BHD', 'BHE', 'BHF', 'BHG', 'BHH', 'BHI', 'BHJ', 'BHK', 'BHL', 'BHM', 'BHN', 'BHO', 'BHP', 'BHQ', 'BHR', 'BHT', 'BHU', 'BHW', 'BHY', 'BIA', 'BID', 'BIF', 'BIH', 'BIJ', 'BIK', 'BIL', 'BIO', 'BIX', 'BIY', 'BIZ', 'BJA', 'BJB', 'BJC', 'BJD', 'BJE', 'BJF', 'BJG', 'BJH', 'BJI', 'BJJ', 'BJK', 'BJL', 'BJM', 'BJN', 'BJO', 'BJQ', 'BJR', 'BJS', 'BJT', 'BJU', 'BJV', 'BJW', 'BJX', 'BJY', 'BJZ', 'BKB', 'BKC', 'BKD', 'BKE'];
-
-          cb1.items = items;
-          cb2.items = items;
-          cb3.items = [];
-          cb4.items = items;
-
-          cb1.addEventListener('selectionChanged', (event) => {
-              document.querySelector('#results1').textContent = Array.from(event.detail).join(', ');
-          });
-
-          cb4.addEventListener('selectionChanged', (event) => {
-              document.querySelector('#results4').textContent = Array.from(event.detail).join(', ');
-          });
-
-          replaceItems.addEventListener('click', (event) => {
-              cb1.items = ['ZZA', 'ZZB', 'ZZP', 'ZZR', 'ZZZ'];
-          });
-      }, 0);
-  </script>
-</div>
-
-<div class="component-container">
-  <div class="chart-container">
-    <ro-bar-chart id="bar-chart-1" class="chart" height="400"
-                  x-axis-caption="Date" y-axis-caption="Value" y-axis-margin="70">
-      <div slot="caption">
-        <h3>Chart #1</h3>
+  <div class="component-container">
+    <div class="chart-container">
+      <ro-bar-chart id="bar-chart-1" class="chart" height="400"
+                    x-axis-caption="Date" y-axis-caption="Value" y-axis-margin="70">
+        <div slot="caption">
+          <h3>Chart #1</h3>
+        </div>
+      </ro-bar-chart>
+      <div class="buttons">
+        <button id="bar-chart-1-button">Reload</button>
       </div>
-    </ro-bar-chart>
-    <div class="buttons">
-      <button id="bar-chart-1-button">Reload</button>
     </div>
-  </div>
 
-  <div class="chart-container">
-    <ro-bar-chart id="bar-chart-2" class="chart" height="400"
-                  x-axis-caption="Date" y-axis-caption="Value">
-      <div slot="caption">
-        <h3>Chart #2</h3>
+    <div class="chart-container">
+      <ro-bar-chart id="bar-chart-2" class="chart" height="400"
+                    x-axis-caption="Date" y-axis-caption="Value">
+        <div slot="caption">
+          <h3>Chart #2</h3>
+        </div>
+      </ro-bar-chart>
+      <div class="buttons">
+        <button id="bar-chart-2-button">Load data</button>
+        <button id="bar-chart-3-button">Clear data</button>
       </div>
-    </ro-bar-chart>
-    <div class="buttons">
-      <button id="bar-chart-2-button">Load data</button>
-      <button id="bar-chart-3-button">Clear data</button>
     </div>
-  </div>
 
-  <div class="chart-container" style="width: 100%;">
-    <ro-bar-chart id="bar-chart-3" class="chart" height="400"
-                  x-axis-caption="Date" y-axis-caption="Value">
-      <div slot="caption">
-        <h3>Chart #3</h3>
+    <div class="chart-container" style="width: 100%;">
+      <ro-bar-chart id="bar-chart-3" class="chart" height="400"
+                    x-axis-caption="Date" y-axis-caption="Value">
+        <div slot="caption">
+          <h3>Chart #3</h3>
+        </div>
+      </ro-bar-chart>
+      <div class="buttons">
+        <button id="bar-chart-4-button">Reload</button>
       </div>
-    </ro-bar-chart>
-    <div class="buttons">
-      <button id="bar-chart-4-button">Reload</button>
     </div>
-  </div>
 
-  <div class="chart-container" style="width: 100%;">
-    <ro-bar-chart id="bar-chart-4" class="chart" height="400"
-                  fixed-bar-width="75"
-                  x-axis-caption="Date" y-axis-caption="Value">
-      <div slot="caption">
-        <h3>Chart #4</h3>
+    <div class="chart-container" style="width: 100%;">
+      <ro-bar-chart id="bar-chart-4" class="chart" height="400"
+                    fixed-bar-width="75"
+                    x-axis-caption="Date" y-axis-caption="Value">
+        <div slot="caption">
+          <h3>Chart #4</h3>
+        </div>
+      </ro-bar-chart>
+      <div class="buttons">
+        <button id="bar-chart-5-button">Reload</button>
       </div>
-    </ro-bar-chart>
-    <div class="buttons">
-      <button id="bar-chart-5-button">Reload</button>
     </div>
+
+    <script>
+        function random(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        function value() {
+            return random(-20 * Math.random(), 100);
+        }
+
+        function generateData(genStacks, genLines, fromDate, toDate) {
+            let date = fromDate;
+            const dates = [];
+
+            while (date.isBefore(toDate)) {
+                dates.push(date.format('YYYY-MM'));
+                date = moment(date).add(1, 'month');
+            }
+
+            const stacks = dates.map(m => {
+                return {
+                    bars: [{value: value(), class: 'current'}, {value: value(), class: 'expected'}],
+                    circles: [{value: value(), class: 'current-ref'}, {value: value(), class: 'final-ref'}],
+                    label: m
+                }
+            });
+
+            const lines = [...Array(Math.round(random(1, 3))).keys()].map((i) => {
+                return ({class: 'line-' + i, values: dates.map(m => ({value: value()}))});
+            });
+
+            return {
+                stacks: genStacks ? stacks : undefined,
+                lines: genLines ? lines : undefined,
+                labels: dates
+            };
+        }
+
+        setTimeout(() => {
+            const d1 = moment('2019-01-01');
+            const d2 = moment('2019-01-01').add(1, 'year');
+            const d3 = moment('2019-01-01').add(10, 'year');
+
+            // chart #1
+            const barChart1 = document.querySelector('#bar-chart-1');
+            barChart1.margins = {top: 15, right: 15, bottom: 80, left: 40};
+            barChart1.data = generateData(true, true, d1, d2);
+            barChart1.tooltipContentProvider = tooltipContentProvider;
+
+            document.querySelector('#bar-chart-1-button').addEventListener('click', () => {
+                barChart1.data = generateData(true, true, d1, d2);
+            });
+
+            // chart #2
+            const barChart2 = document.querySelector('#bar-chart-2');
+
+            document.querySelector('#bar-chart-2-button').addEventListener('click', () => {
+                barChart2.loading = true;
+                barChart2.margins = {top: 15, right: 15, bottom: 60, left: 40};
+
+                setTimeout(() => {
+                    barChart2.loading = false;
+                    barChart2.data = generateData(true, true, d1, d2);
+                }, 1000);
+            });
+
+            document.querySelector('#bar-chart-3-button').addEventListener('click', () => {
+                barChart2.data = null;
+            });
+
+            // chart #3
+            const barChart3 = document.querySelector('#bar-chart-3');
+            barChart3.margins = {top: 15, right: 15, bottom: 60, left: 40};
+            barChart3.data = generateData(false, true, d1, d2);
+
+            document.querySelector('#bar-chart-4-button').addEventListener('click', () => {
+                barChart3.data = generateData(false, true, d1, d2);
+            });
+
+            // chart #4
+            const barChart4 = document.querySelector('#bar-chart-4');
+            barChart4.margins = {top: 15, right: 15, bottom: 80, left: 40};
+            barChart4.data = generateData(true, false, d1, d3);
+            barChart4.tooltipContentProvider = tooltipContentProvider;
+
+            document.querySelector('#bar-chart-5-button').addEventListener('click', () => {
+                barChart4.data = generateData(true, false, d1, d3);
+            });
+        }, 0);
+    </script>
   </div>
-
-  <script>
-      function random(min, max) {
-          return Math.random() * (max - min) + min;
-      }
-
-      function value() {
-          return random(-20 * Math.random(), 100);
-      }
-
-      function generateData(genStacks, genLines, fromDate, toDate) {
-          let date = fromDate;
-          const dates = [];
-
-          while (date.isBefore(toDate)) {
-              dates.push(date.format('YYYY-MM'));
-              date = moment(date).add(1, 'month');
-          }
-
-          const stacks = dates.map(m => {
-              return {
-                  bars: [{value: value(), class: 'current'}, {value: value(), class: 'expected'}],
-                  circles: [{value: value(), class: 'current-ref'}, {value: value(), class: 'final-ref'}],
-                  label: m
-              }
-          });
-
-          const lines = [...Array(Math.round(random(1, 3))).keys()].map((i) => {
-              return ({class: 'line-' + i, values: dates.map(m => ({value: value()}))});
-          });
-
-          return {
-              stacks: genStacks ? stacks : undefined,
-              lines: genLines ? lines : undefined,
-              labels: dates
-          };
-      }
-
-      setTimeout(() => {
-          const d1 = moment('2019-01-01');
-          const d2 = moment('2019-01-01').add(1, 'year');
-          const d3 = moment('2019-01-01').add(10, 'year');
-
-          // chart #1
-          const barChart1 = document.querySelector('#bar-chart-1');
-          barChart1.margins = {top: 15, right: 15, bottom: 80, left: 40};
-          barChart1.data = generateData(true, true, d1, d2);
-          barChart1.tooltipContentProvider = tooltipContentProvider;
-
-          document.querySelector('#bar-chart-1-button').addEventListener('click', () => {
-              barChart1.data = generateData(true, true, d1, d2);
-          });
-
-          // chart #2
-          const barChart2 = document.querySelector('#bar-chart-2');
-
-          document.querySelector('#bar-chart-2-button').addEventListener('click', () => {
-              barChart2.loading = true;
-              barChart2.margins = {top: 15, right: 15, bottom: 60, left: 40};
-
-              setTimeout(() => {
-                  barChart2.loading = false;
-                  barChart2.data = generateData(true, true, d1, d2);
-              }, 1000);
-          });
-
-          document.querySelector('#bar-chart-3-button').addEventListener('click', () => {
-              barChart2.data = null;
-          });
-
-          // chart #3
-          const barChart3 = document.querySelector('#bar-chart-3');
-          barChart3.margins = {top: 15, right: 15, bottom: 60, left: 40};
-          barChart3.data = generateData(false, true, d1, d2);
-
-          document.querySelector('#bar-chart-4-button').addEventListener('click', () => {
-              barChart3.data = generateData(false, true, d1, d2);
-          });
-
-          // chart #4
-          const barChart4 = document.querySelector('#bar-chart-4');
-          barChart4.margins = {top: 15, right: 15, bottom: 80, left: 40};
-          barChart4.data = generateData(true, false, d1, d3);
-          barChart4.tooltipContentProvider = tooltipContentProvider;
-
-          document.querySelector('#bar-chart-5-button').addEventListener('click', () => {
-              barChart4.data = generateData(true, false, d1, d3);
-          });
-      }, 0);
-  </script>
-</div>
 </div>
 
 <ro-tooltip></ro-tooltip>
