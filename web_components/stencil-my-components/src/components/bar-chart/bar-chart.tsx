@@ -12,8 +12,6 @@ import {ChartDataType, LineElemType} from "./chart-model";
 // gaps
 // brush
 // right click - context menu
-// axis formatters
-// clean listeners
 // http://bl.ocks.org/WilliamQLiu/76ae20060e19bf42d774
 
 @Component({
@@ -28,13 +26,17 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
-  private xAxisMargin = 25;
-
   @Prop({mutable: true}) data: ChartDataType;
   @Prop({mutable: true}) height = 400;
   @Prop({mutable: true}) loading = false;
   @Prop({mutable: true}) margins = {top: 20, bottom: 20, left: 20, right: 20};
-  @Prop() fixedBarWidth: number;
+  @Prop({mutable: true}) xAxisCaption = '';
+  @Prop({mutable: true}) yAxisCaption = '';
+  @Prop({mutable: true}) xAxisMargin = 25;
+  @Prop({mutable: true}) yAxisMargin = 60;
+  @Prop({mutable: true}) fixedBarWidth: number;
+
+  private resizeEventListener: EventListenerOrEventListenerObject;
 
   // -------------------------------------------------------------------------------------------------------------------
 
@@ -85,13 +87,19 @@ export class BarChart {
   componentDidLoad() {
     this.redrawChart();
 
-    window.addEventListener('resize', () => {
+    this.resizeEventListener = () => {
       this.redrawChart();
-    });
+    };
+
+    window.addEventListener('resize', this.resizeEventListener);
   }
 
   componentDidUpdate() {
     this.redrawChart();
+  }
+
+  componentDidUnload() {
+    window.removeEventListener('resize', this.resizeEventListener);
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -291,10 +299,10 @@ export class BarChart {
       .style('font-size', '12px');
 
     axes.select('.x-axis-text')
-      .attr('transform', `translate(${width / 2}, ${height + 55})`)
+      .attr('transform', `translate(${width / 2}, ${height + this.yAxisMargin})`)
       .style('text-anchor', 'middle')
       .style('font-size', '14px')
-      .text('Month');
+      .text(this.xAxisCaption);
 
     axes.select('.y-axis-text')
       .attr('transform', 'rotate(-90)')
@@ -302,7 +310,7 @@ export class BarChart {
       .attr('x', -(height / 2))
       .attr('dy', '1em')
       .style('text-anchor', 'middle')
-      .text('Value');
+      .text(this.yAxisCaption);
 
     // -----------------------------------------------------------------------------------------------------------------
 

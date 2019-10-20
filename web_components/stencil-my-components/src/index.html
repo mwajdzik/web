@@ -134,7 +134,8 @@
 
 <div class="component-container">
   <div class="chart-container">
-    <ro-bar-chart id="bar-chart-1" class="chart" height="400">
+    <ro-bar-chart id="bar-chart-1" class="chart" height="400"
+                  x-axis-caption="Date" y-axis-caption="Value" y-axis-margin="70">
       <div slot="caption">
         <h3>Chart #1</h3>
       </div>
@@ -145,7 +146,8 @@
   </div>
 
   <div class="chart-container">
-    <ro-bar-chart id="bar-chart-2" class="chart" height="400">
+    <ro-bar-chart id="bar-chart-2" class="chart" height="400"
+                  x-axis-caption="Date" y-axis-caption="Value">
       <div slot="caption">
         <h3>Chart #2</h3>
       </div>
@@ -157,7 +159,8 @@
   </div>
 
   <div class="chart-container" style="width: 100%;">
-    <ro-bar-chart id="bar-chart-3" class="chart" height="400">
+    <ro-bar-chart id="bar-chart-3" class="chart" height="400"
+                  x-axis-caption="Date" y-axis-caption="Value">
       <div slot="caption">
         <h3>Chart #3</h3>
       </div>
@@ -168,7 +171,9 @@
   </div>
 
   <div class="chart-container" style="width: 100%;">
-    <ro-bar-chart id="bar-chart-4" class="chart" height="400" fixed-bar-width="80">
+    <ro-bar-chart id="bar-chart-4" class="chart" height="400"
+                  fixed-bar-width="75"
+                  x-axis-caption="Date" y-axis-caption="Value">
       <div slot="caption">
         <h3>Chart #4</h3>
       </div>
@@ -221,7 +226,7 @@
 
           // chart #1
           const barChart1 = document.querySelector('#bar-chart-1');
-          barChart1.margins = {top: 15, right: 15, bottom: 60, left: 40};
+          barChart1.margins = {top: 15, right: 15, bottom: 80, left: 40};
           barChart1.data = generateData(true, true, d1, d2);
 
           document.querySelector('#bar-chart-1-button').addEventListener('click', () => {
