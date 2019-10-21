@@ -241,7 +241,9 @@
             });
 
             const lines = [...Array(Math.round(random(1, 3))).keys()].map((i) => {
-                return ({class: 'line-' + i, values: dates.map(m => ({value: value()}))});
+                const values = dates.map(m => ({value: value()}));
+                values[Math.round(random(0, values.length - 1))] = undefined;
+                return ({class: 'line-' + i, values: values});
             });
 
             return {

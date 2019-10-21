@@ -155,11 +155,11 @@ export class BarChart {
 
     const minValue = Math.floor(Math.min(
       min(this.data.stacks, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
-      min(this.data.lines, d => min(d.values.map(i => i.value))) || 0) / 10) * 10;
+      min(this.data.lines, d => min(d.values.map(i => i ? i.value : 0))) || 0) / 10) * 10;
 
     const maxValue = Math.ceil(Math.max(
       max(this.data.stacks, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
-      max(this.data.lines, d => max(d.values.map(i => i.value))) || 0) / 10) * 10;
+      max(this.data.lines, d => max(d.values.map(i => i ? i.value : 0))) || 0) / 10) * 10;
 
     svg.select('.chart')
       .attr('height', height)
@@ -193,7 +193,7 @@ export class BarChart {
       .append('g')
       .attr('class', 'stack')
       .on('mouseover', (d, i) => {
-        if (this.tooltipContentProvider) {
+        if (this.tooltipContentProvider && d.gaps.length == 0) {
           this.roShowChartTooltip.emit({
             content: this.tooltipContentProvider(d, i),
             eventX: event.pageX,
@@ -201,8 +201,8 @@ export class BarChart {
           });
         }
       })
-      .on('mousemove', () => {
-        if (this.tooltipContentProvider) {
+      .on('mousemove', (d) => {
+        if (this.tooltipContentProvider && d.gaps.length == 0) {
           this.roUpdatePositionChartTooltip.emit({
             eventX: event.pageX,
             eventY: event.pageY
@@ -295,6 +295,7 @@ export class BarChart {
     const lines = svg.select('.group-data .lines');
 
     const linePath = line<LineElemType>()
+      .defined(d => d !== undefined)
       .x((_, i) => this.x(this.data.labels[i]))
       .y(d => this.y(d.value))
       .curve(curveMonotoneX);
