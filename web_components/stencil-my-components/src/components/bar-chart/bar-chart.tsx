@@ -125,6 +125,20 @@ export class BarChart {
     }
 
     this.data.stacks.forEach(d => {
+      if (!d.bars) {
+        d.bars = [];
+      }
+
+      if (!d.circles) {
+        d.circles = [];
+      }
+
+      if (d.bars.length == 0 && d.circles.length === 0) {
+        d.gaps = [{class: '', value: 0}];
+      } else {
+        d.gaps = [];
+      }
+
       for (let i = 0; i < d.bars.length - 1; i++) {
         if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
           d.bars[i].covered = true;
@@ -206,18 +220,42 @@ export class BarChart {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    let gaps = stacks
+      .selectAll('rect.gap')
+      .data(d => d.gaps);
+
+    gaps.exit()
+      .remove();
+
+    gaps.enter()
+      .append('rect')
+      .attr('class', 'gap');
+
+    gaps = stacks
+      .selectAll('rect.gap');
+
+    gaps.transition(transition())
+      .attr('height', this.y(this.y.domain()[0]))
+      .attr('width', this.x.bandwidth())
+      .attr('y', this.y(this.y.domain()[1]))
+      .attr('rx', '3')
+      .attr('ry', '3');
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     let bars = stacks
-      .selectAll('rect')
+      .selectAll('rect.bar')
       .data(d => d.bars);
 
     bars.exit()
       .remove();
 
     bars.enter()
-      .append('rect');
+      .append('rect')
+      .attr('class', 'bar');
 
     bars = stacks
-      .selectAll('rect');
+      .selectAll('rect.bar');
 
     bars.transition(transition())
       .attr('class', d => `bar ${d.class} ${d.value < 0 ? 'negative' : ''}`)
@@ -233,17 +271,18 @@ export class BarChart {
     // -----------------------------------------------------------------------------------------------------------------
 
     let circles = stacks
-      .selectAll('circle')
+      .selectAll('circle.circle')
       .data(d => d.circles);
 
     circles.exit()
       .remove();
 
     circles.enter()
-      .append('circle');
+      .append('circle')
+      .attr('class', 'circle');
 
     circles = stacks
-      .selectAll('circle');
+      .selectAll('circle.circle');
 
     circles.transition(transition())
       .attr('class', d => `${d.class} circle`)

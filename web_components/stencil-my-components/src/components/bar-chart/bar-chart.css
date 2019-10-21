@@ -75,3 +75,7 @@ svg {
 .grid path {
   stroke-width: 0;
 }
+
+.gap {
+  fill: #ccc;
+}

@@ -5,8 +5,9 @@ export type ValueType = {
 }
 
 export type StacksDataType = {
-  bars: ValueType[],
-  circles: ValueType[],
+  bars?: ValueType[],
+  circles?: ValueType[],
+  gaps?: ValueType[],
   label: string
 };
 

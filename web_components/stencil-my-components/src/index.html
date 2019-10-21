@@ -199,7 +199,7 @@
 
     <div class="chart-container" style="width: 100%;">
       <ro-bar-chart id="bar-chart-4" class="chart" height="400"
-                    fixed-bar-width="75"
+                    fixed-bar-width="100"
                     x-axis-caption="Date" y-axis-caption="Value">
         <div slot="caption">
           <h3>Chart #4</h3>
@@ -228,7 +228,11 @@
                 date = moment(date).add(1, 'month');
             }
 
-            const stacks = dates.map(m => {
+            const stacks = dates.map((m, i) => {
+                if ((i + 1) % 7 === 0) {
+                    return {label: m}
+                }
+
                 return {
                     bars: [{value: value(), class: 'current'}, {value: value(), class: 'expected'}],
                     circles: [{value: value(), class: 'current-ref'}, {value: value(), class: 'final-ref'}],
