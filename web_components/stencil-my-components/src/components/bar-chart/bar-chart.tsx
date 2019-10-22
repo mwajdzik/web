@@ -14,7 +14,9 @@ import {ChartDataType, ChartTooltipType, LineElemType} from "./chart-model";
 })
 export class BarChart {
 
-  @Element() el: HTMLElement;
+  @Element()
+  private el: HTMLElement;
+  private svg: any;
 
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
@@ -42,17 +44,16 @@ export class BarChart {
     axisLeft(this.y).ticks(5);
 
   render() {
-    let content;
-
-    if (!this.data) {
-      content = (
-        <div class='caption'>
+    return [
+      <figcaption>
+        <slot name="caption"/>
+      </figcaption>,
+      <figure style={{'height': this.height + 'px'}}>
+        <div class='caption' style={{display: (!this.data ? 'flex' : 'none')}}>
           <p>{this.loading ? 'Loading...' : 'No data'}</p>
         </div>
-      );
-    } else {
-      content = (
-        <svg xmlns='http://www.w3.org/2000/svg'>
+
+        <svg xmlns='http://www.w3.org/2000/svg' style={{display: (this.data ? 'block' : 'none')}}>
           <g class='chart'>
             <g class='pre-data'/>
             <g class='group-data'>
@@ -69,24 +70,15 @@ export class BarChart {
             <g class='post-data'/>
           </g>
         </svg>
-      );
-    }
-
-    return [
-      <figcaption>
-        <slot name="caption"/>
-      </figcaption>,
-      <figure style={{'height': this.height + 'px'}}>
-        {content}
       </figure>
     ];
   }
 
   componentDidLoad() {
-    this.redrawChart();
+    this.svg = select(this.el.shadowRoot.querySelector('svg'));
 
-    this.resizeEventListener = () => this.redrawChart();
-    window.addEventListener('resize', this.resizeEventListener);
+    this.redrawChart();
+    this.addEventListeners();
   }
 
   componentDidUpdate() {
@@ -99,20 +91,29 @@ export class BarChart {
 
   // -------------------------------------------------------------------------------------------------------------------
 
-  redrawChart() {
-    const svg = select(this.el.shadowRoot.querySelector('svg'));
+  addEventListeners() {
+    this.resizeEventListener = () => this.redrawChart();
+    window.addEventListener('resize', this.resizeEventListener);
 
-    if (!svg || !svg.node() || !this.data) {
+    this.svg.on('contextmenu', () => {
+      event.preventDefault();
+    })
+  }
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  redrawChart() {
+    if (!this.data) {
       return;
     }
 
-    const boundingClientRect = svg.node().getBoundingClientRect();
+    const boundingClientRect = this.svg.node().getBoundingClientRect();
     const clientWidth = this.fixedBarWidth ? this.data.labels.length * this.fixedBarWidth : boundingClientRect.width;
     const clientHeight = this.height;
     const width = clientWidth - this.margins.left - this.margins.right;
     const height = clientHeight - this.margins.top - this.margins.bottom;
 
-    svg.style('width', this.fixedBarWidth ? clientWidth : '100%');
+    this.svg.style('width', this.fixedBarWidth ? clientWidth : '100%');
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -161,12 +162,12 @@ export class BarChart {
       max(this.data.stacks, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
       max(this.data.lines, d => max(d.values.map(i => i ? i.value : 0))) || 0) / 10) * 10;
 
-    svg.select('.chart')
+    this.svg.select('.chart')
       .attr('height', height)
       .attr('width', width - this.margins.left - this.margins.right)
       .attr('transform', `translate(${this.margins.left}, ${this.margins.top})`);
 
-    const groups = svg.select('.group-data .groups');
+    const groups = this.svg.select('.group-data .groups');
     groups.attr('transform', `translate(${this.xAxisMargin}, 0)`);
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -213,6 +214,9 @@ export class BarChart {
         if (this.tooltipContentProvider) {
           this.roHideChartTooltip.emit({});
         }
+      })
+      .on('contextmenu', function () {
+        console.log(event);
       });
 
     stacks = groups.selectAll('g');
@@ -292,7 +296,7 @@ export class BarChart {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    const lines = svg.select('.group-data .lines');
+    const lines = this.svg.select('.group-data .lines');
 
     const linePath = line<LineElemType>()
       .defined(d => d !== undefined)
@@ -323,7 +327,7 @@ export class BarChart {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    const axes = svg.select('.group-data .group-axes');
+    const axes = this.svg.select('.group-data .group-axes');
 
     axes.select('.y.axis')
       .attr('class', 'y axis')
