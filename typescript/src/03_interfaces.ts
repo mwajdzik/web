@@ -1,11 +1,12 @@
 interface User {
     username: string;
     password: string;
-    confirmPassword?: string;       // Optional property
+    confirmed?: boolean;       // optional property
 }
 
 let user: User;
-user = {username: 'max', password: 'supersecret'};
+
+user = {username: 'max', password: 'super_secret'};
 
 // user = { anything: 'anything', anynumber: 5};
 
@@ -15,7 +16,7 @@ interface CanDrive {
 
 let car: CanDrive = {
     accelerate: function (speed: number) {
-        console.log('Accelerating by', speed);
+        console.log(`Accelerating by ${speed}`);
     }
 };
 
