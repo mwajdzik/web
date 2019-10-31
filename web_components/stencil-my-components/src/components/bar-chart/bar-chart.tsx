@@ -1,4 +1,4 @@
-import {Component, Element, Event, EventEmitter, h, Prop} from '@stencil/core';
+import {Component, Element, Event, EventEmitter, h, Prop, Watch} from '@stencil/core';
 import {event, select} from 'd3-selection';
 import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
 import {max, min} from 'd3-array';
@@ -35,6 +35,9 @@ export class BarChart {
   @Event({bubbles: true, composed: true}) roShowChartTooltip: EventEmitter<ChartTooltipType>;
   @Event({bubbles: true, composed: true}) roHideChartTooltip: EventEmitter<ChartTooltipType>;
   @Event({bubbles: true, composed: true}) roUpdatePositionChartTooltip: EventEmitter<ChartTooltipType>;
+
+  private minValue: number;
+  private maxValue: number;
 
   private resizeEventListener: EventListenerOrEventListenerObject;
 
@@ -77,6 +80,7 @@ export class BarChart {
   componentDidLoad() {
     this.svg = select(this.el.shadowRoot.querySelector('svg'));
 
+    this.newDataHandler();
     this.redrawChart();
     this.addEventListeners();
   }
@@ -87,6 +91,15 @@ export class BarChart {
 
   componentDidUnload() {
     window.removeEventListener('resize', this.resizeEventListener);
+  }
+
+  // -------------------------------------------------------------------------------------------------------------------
+
+  @Watch('data')
+  itemsChanged(newValue: ChartDataType, oldValue: ChartDataType) {
+    if (newValue !== oldValue) {
+      this.newDataHandler();
+    }
   }
 
   // -------------------------------------------------------------------------------------------------------------------
@@ -115,53 +128,6 @@ export class BarChart {
 
     this.svg.style('width', this.fixedBarWidth ? clientWidth : '100%');
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    if (!this.data.stacks) {
-      this.data.stacks = [];
-    }
-
-    if (!this.data.lines) {
-      this.data.lines = [];
-    }
-
-    this.data.stacks.forEach(d => {
-      if (!d.bars) {
-        d.bars = [];
-      }
-
-      if (!d.circles) {
-        d.circles = [];
-      }
-
-      if (d.bars.length == 0 && d.circles.length === 0) {
-        d.gaps = [{class: '', value: 0}];
-      } else {
-        d.gaps = [];
-      }
-
-      for (let i = 0; i < d.bars.length - 1; i++) {
-        if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
-          d.bars[i].covered = true;
-          d.bars = d.bars.sort((a, b) => b.value - a.value);
-        }
-        if (i < d.bars.length && d.bars[i].value < 0 && d.bars[i + 1].value < d.bars[i].value) {
-          d.bars[i].covered = true;
-          d.bars = d.bars.sort((a, b) => a.value - b.value);
-        }
-      }
-    });
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    const minValue = Math.floor(Math.min(
-      min(this.data.stacks, d => Math.min(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
-      min(this.data.lines, d => min(d.values.map(i => i ? i.value : 0))) || 0) / 10) * 10;
-
-    const maxValue = Math.ceil(Math.max(
-      max(this.data.stacks, d => Math.max(...d.bars.map(i => i.value), ...d.circles.map(i => i.value))) || 0,
-      max(this.data.lines, d => max(d.values.map(i => i ? i.value : 0))) || 0) / 10) * 10;
-
     this.svg.select('.chart')
       .attr('height', height)
       .attr('width', width - this.margins.left - this.margins.right)
@@ -178,7 +144,7 @@ export class BarChart {
       .padding(0.1);
 
     this.y = scaleLinear()
-      .domain([Math.min(minValue, 0), Math.max(maxValue, 0)])
+      .domain([Math.min(this.minValue, 0), Math.max(this.maxValue, 0)])
       .range([height, 0]);
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -365,5 +331,43 @@ export class BarChart {
       .call(this.yGridLines()
         .tickSize(this.xAxisMargin - width)
         .tickFormat(() => ''));
+  }
+
+  newDataHandler() {
+    if (!this.data) {
+      return;
+    }
+
+    this.data.stacks = this.data.stacks || [];
+    this.data.lines = this.data.lines || [];
+
+    this.data.stacks.forEach(d => {
+      d.bars = d.bars || [];
+      d.circles = d.circles || [];
+      d.gaps = (d.bars.length == 0 && d.circles.length === 0) ? [{class: '', value: 0}] : [];
+
+      for (let i = 0; i < d.bars.length - 1; i++) {
+        if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {
+          d.bars[i].covered = true;
+          d.bars = d.bars.sort((a, b) => b.value - a.value);
+        }
+
+        if (i < d.bars.length && d.bars[i].value < 0 && d.bars[i + 1].value < d.bars[i].value) {
+          d.bars[i].covered = true;
+          d.bars = d.bars.sort((a, b) => a.value - b.value);
+        }
+      }
+    });
+
+    const val = i => i && i.value || 0;
+
+    this.minValue = Math.floor(Math.min(
+      min(this.data.stacks, d => Math.min(...d.bars.map(val), ...d.circles.map(val))) || 0,
+      min(this.data.lines, d => min(d.values.map(val))) || 0) / 10) * 10;
+
+    this.maxValue = Math.ceil(Math.max(
+      max(this.data.stacks, d => Math.max(...d.bars.map(val), ...d.circles.map(val))) || 0,
+      max(this.data.lines, d => max(d.values.map(val))) || 0) / 10) * 10;
+
   }
 }
