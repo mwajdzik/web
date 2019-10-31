@@ -1,12 +1,20 @@
 import {ExportedClass} from './05_modules';
 
-class Car {
-    engineName: string;
-    gears: number;
+class Vehicle {
+    protected speed: number;
 
-    private speed: number;
+    drive(): void {
+        console.log('driving...')
+    }
+}
 
-    constructor(speed: number) {
+class Car extends Vehicle {
+    private engineName: string;
+    private gears: number;
+
+    constructor(public doors: number = 4,
+                speed: number = 100) {
+        super();
         this.speed = speed || 0;
     }
 
@@ -27,11 +35,17 @@ class Car {
     }
 }
 
-const car2 = new Car(5);
-car2.accelerate();
+const car1 = new Car(4, 120);
+car1.drive();
+car1.accelerate();
 
-console.log(car2.getSpeed());
+console.log(car1.getSpeed());
+console.log(car1.doors);
 console.log(Car.numberOfWheels());
+
+const car2 = new Car();
+console.log(car2.getSpeed());
+console.log(car2.doors);
 
 const exported = new ExportedClass();
 console.log(exported.x);
