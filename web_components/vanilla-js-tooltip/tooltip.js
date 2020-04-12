@@ -1,5 +1,3 @@
-//
-
 class Tooltip extends HTMLElement {
 
     constructor() {
@@ -12,6 +10,7 @@ class Tooltip extends HTMLElement {
         this._tooltipText = 'Some dummy tooltip text';
 
         this.attachShadow({mode: "open"});
+
         this.shadowRoot.innerHTML = `
             <style>
                 div {
@@ -26,7 +25,7 @@ class Tooltip extends HTMLElement {
                     padding: 0.5em;
                     box-shadow: 1px 1px 6px rgba(0,0,0,0.25);
                 }
-                               
+
                 .icon {
                     background-color: darkcyan;
                     color: white;
@@ -42,7 +41,7 @@ class Tooltip extends HTMLElement {
                     text-decoration: underline;
                 }
                 
-                /* the default style of the component */
+                /* the default style of the component - styling uc-tooltip */
                 :host {
                     position: relative;
                     background-color: azure;

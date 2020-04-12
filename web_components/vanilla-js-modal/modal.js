@@ -3,6 +3,7 @@ class Modal extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({mode: 'open'});
+
         this.shadowRoot.innerHTML = `
             <style>
                 #backdrop {
@@ -133,7 +134,7 @@ class Modal extends HTMLElement {
 
         // or:
         this.dispatchEvent(new Event('cancel'));                                // only modal will catch it
-        this.dispatchEvent(new Event('cancel', {bubbles: true}));    // modal and body will catch it
+        this.dispatchEvent(new Event('cancel', {bubbles: true}));               // modal and body will catch it
     }
 
     _confirm(event) {

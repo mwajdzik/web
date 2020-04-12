@@ -1,4 +1,5 @@
 let myStringVariable: string;
+
 myStringVariable = 'This is a string';
 // myStringVariable = 4;
 

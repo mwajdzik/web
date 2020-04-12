@@ -1,11 +1,11 @@
-import {Component, Element, Event, EventEmitter, h, Prop, Watch} from '@stencil/core';
-import {event, select} from 'd3-selection';
-import {ScaleBand, scaleBand, scaleLinear, ScaleLinear} from 'd3-scale';
-import {max, min} from 'd3-array';
-import {transition} from 'd3-transition';
-import {axisBottom, axisLeft} from 'd3-axis';
-import {curveMonotoneX, line} from 'd3-shape';
-import {ChartDataType, ChartTooltipType, LineElemType} from "./chart-model";
+import { Component, Element, Event, EventEmitter, h, Prop, Watch } from '@stencil/core';
+import { event, select } from 'd3-selection';
+import { ScaleBand, scaleBand, scaleLinear, ScaleLinear } from 'd3-scale';
+import { max, min } from 'd3-array';
+import { transition } from 'd3-transition';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { curveMonotoneX, line } from 'd3-shape';
+import { ChartDataType, ChartTooltipType, LineElemType } from "./chart-model";
 
 @Component({
   tag: 'ro-bar-chart',
@@ -21,20 +21,20 @@ export class BarChart {
   private x: ScaleBand<string>;
   private y: ScaleLinear<number, number>;
 
-  @Prop({mutable: true}) data: ChartDataType;
-  @Prop({mutable: true}) height = 400;
-  @Prop({mutable: true}) loading = false;
-  @Prop({mutable: true}) margins = {top: 20, bottom: 20, left: 20, right: 20};
-  @Prop({mutable: true}) xAxisCaption = '';
-  @Prop({mutable: true}) yAxisCaption = '';
-  @Prop({mutable: true}) xAxisMargin = 25;
-  @Prop({mutable: true}) yAxisMargin = 60;
-  @Prop({mutable: true}) fixedBarWidth: number;
+  @Prop({ mutable: true }) data: ChartDataType;
+  @Prop({ mutable: true }) height = 400;
+  @Prop({ mutable: true }) loading = false;
+  @Prop({ mutable: true }) margins = { top: 20, bottom: 20, left: 20, right: 20 };
+  @Prop({ mutable: true }) xAxisCaption = '';
+  @Prop({ mutable: true }) yAxisCaption = '';
+  @Prop({ mutable: true }) xAxisMargin = 25;
+  @Prop({ mutable: true }) yAxisMargin = 60;
+  @Prop({ mutable: true }) fixedBarWidth: number;
 
   @Prop() tooltipContentProvider: any;
-  @Event({bubbles: true, composed: true}) roShowChartTooltip: EventEmitter<ChartTooltipType>;
-  @Event({bubbles: true, composed: true}) roHideChartTooltip: EventEmitter<ChartTooltipType>;
-  @Event({bubbles: true, composed: true}) roUpdatePositionChartTooltip: EventEmitter<ChartTooltipType>;
+  @Event({ bubbles: true, composed: true }) roShowChartTooltip: EventEmitter<ChartTooltipType>;
+  @Event({ bubbles: true, composed: true }) roHideChartTooltip: EventEmitter<ChartTooltipType>;
+  @Event({ bubbles: true, composed: true }) roUpdatePositionChartTooltip: EventEmitter<ChartTooltipType>;
 
   private minValue: number;
   private maxValue: number;
@@ -49,28 +49,28 @@ export class BarChart {
   render() {
     return [
       <figcaption>
-        <slot name="caption"/>
+        <slot name="caption" />
       </figcaption>,
-      <figure style={{'height': this.height + 'px'}}>
-        <div class='caption' style={{display: (!this.data ? 'flex' : 'none')}}>
+      <figure style={{ 'height': this.height + 'px' }}>
+        <div class='caption' style={{ display: (!this.data ? 'flex' : 'none') }}>
           <p>{this.loading ? 'Loading...' : 'No data'}</p>
         </div>
 
-        <svg xmlns='http://www.w3.org/2000/svg' style={{display: (this.data ? 'block' : 'none')}}>
+        <svg xmlns='http://www.w3.org/2000/svg' style={{ display: (this.data ? 'block' : 'none') }}>
           <g class='chart'>
-            <g class='pre-data'/>
+            <g class='pre-data' />
             <g class='group-data'>
               <g class='group-axes'>
-                <g class='x axis'/>
-                <g class='y axis'/>
-                <g class='grid'/>
-                <text class='x-axis-text'/>
-                <text class='y-axis-text'/>
+                <g class='x axis' />
+                <g class='y axis' />
+                <g class='grid' />
+                <text class='x-axis-text' />
+                <text class='y-axis-text' />
               </g>
-              <g class='groups'/>
-              <g class='lines'/>
+              <g class='groups' />
+              <g class='lines' />
             </g>
-            <g class='post-data'/>
+            <g class='post-data' />
           </g>
         </svg>
       </figure>
@@ -344,7 +344,7 @@ export class BarChart {
     this.data.stacks.forEach(d => {
       d.bars = d.bars || [];
       d.circles = d.circles || [];
-      d.gaps = (d.bars.length == 0 && d.circles.length === 0) ? [{class: '', value: 0}] : [];
+      d.gaps = (d.bars.length == 0 && d.circles.length === 0) ? [{ class: '', value: 0 }] : [];
 
       for (let i = 0; i < d.bars.length - 1; i++) {
         if (i < d.bars.length && d.bars[i].value > 0 && d.bars[i].value < d.bars[i + 1].value) {

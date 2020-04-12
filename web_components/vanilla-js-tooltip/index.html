@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Custom Components</title>
     <script src="tooltip.js"></script>
     <script src="confirm-link.js"></script>
 
@@ -19,7 +19,6 @@
             --color-primary: #777
         }
 
-        /* set blue color for b in the first uc-tooltip */
         b {
             color: #2e6da4;
         }
@@ -37,19 +36,21 @@
 <body>
 <div>
     <uc-tooltip id="tooltip-one" class="important" text="My tooltip content">
-        <b>Some text</b>
+        <b>Some text in blue</b>
     </uc-tooltip>
 </div>
 
 <div class="some-class">
-    <uc-tooltip></uc-tooltip>
+    <uc-tooltip text="Another tooltip content">
+        <b>And some more text in blue as well</b>
+    </uc-tooltip>
 </div>
 
 <div>
     <uc-tooltip></uc-tooltip>
 </div>
 
-<div>
+<div style="margin-left: 1.5em">
     <a is="uc-confirm-link" href="https://google.com">Google</a>
 </div>
 

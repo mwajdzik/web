@@ -1,5 +1,10 @@
 * {
-    font-family: sans-serif;
+    font-family: 'Arvo', serif;
+}
+
+section {
+    padding: 10px;
+    margin: 5px;
 }
 
 section:nth-of-type(3) {
@@ -17,5 +22,20 @@ h1 {
 }
 
 #form {
-    margin: 2em;
+    margin: 2em 45vh;
+}
+
+/* direct sibling */
+h1 + p {
+    font-style: italic;
+}
+
+/* sibling but it does not have to be a direct one */
+h1 ~ p {
+    color: azure;
+}
+
+/* descendant */
+main form {
+    color: blue;
 }
