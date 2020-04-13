@@ -7,12 +7,12 @@ import {Component, Method, Prop, State, h} from '@stencil/core';
 })
 export class SideDrawer {
 
-  // properties are set from the outside
+  // @Prop properties are set from the outside
   @Prop({reflect: true}) sideDrawerTitle: string;
   @Prop({reflect: true, mutable: true}) opened = false;         // mutable - watched by Stencil for internal changes
 
-  // state properties hold the internal state
-  @State() showContactInfo = false;                                  // watched by Stencil for internal changes (will rerun render)
+  // @State properties hold the internal state
+  @State() showContactInfo = false;                             // watched by Stencil for internal changes (will rerun render)
 
   render() {
     console.log('Rendering... value: ' + this.sideDrawerTitle + ', open: ' + this.opened);
@@ -72,7 +72,7 @@ export class SideDrawer {
   }
 
   @Method()
-  openDrawer() {
+  async openDrawer() {
     this.opened = true;
   }
 }

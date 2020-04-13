@@ -1,7 +1,8 @@
 import { Config } from '@stencil/core';
 
 export const config: Config = {
-  namespace: 'stencil-new-version',
+  namespace: 'stencil-side-drawer',
+  taskQueue: 'async',
   outputTargets: [
     {
       type: 'dist',

@@ -62,6 +62,9 @@ These components have (vanilla) JavaScript added to them that enhances the web c
     to reduce the amount of work JS and the browser have to do)
     
 
+## stencil-side-drawer
+
+
 ## stencil-stocks
 
 
