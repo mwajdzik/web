@@ -56,5 +56,6 @@ These components have (vanilla) JavaScript added to them that enhances the web c
     - ``` getAttribute('name') ```
     - ``` static get observedAttributes()  -  attributeChangedCallback```
 - use the shadow DOM if desired ``` this.attachShadow({mode: "open"}) ```
+- use templates ``` <slot>Some default</slot> ```
 
 ## vanilla-js-modal

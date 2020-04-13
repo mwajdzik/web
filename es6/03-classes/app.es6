@@ -2,13 +2,15 @@
 
 class Task {
 
+    id = 23;
+
     constructor() {
         console.log('Constructing Task');
         this.location = 'Mazatlan';
     }
 
     getId() {
-        return 23;
+        return this.id;
     }
 
     static getDefaultId() {

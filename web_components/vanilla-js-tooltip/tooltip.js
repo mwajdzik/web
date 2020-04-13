@@ -34,8 +34,6 @@ class Tooltip extends HTMLElement {
                     cursor: default;
                 }
                 
-                /* SPECIAL SELECTORS: */
-                
                 /* style what is put in the slot - only top level */
                 ::slotted(b) {
                     text-decoration: underline;
@@ -59,7 +57,6 @@ class Tooltip extends HTMLElement {
             </style>
             
             <slot>Some default</slot>
-            
             <span class="icon">?</span>
         `
     }

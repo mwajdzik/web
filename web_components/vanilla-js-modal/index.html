@@ -21,6 +21,7 @@
     <h1 slot="title">Please Confirm</h1>
     <p slot="main">With your confirmation you agree to pay the full amount!</p>
 </uc-modal>
+
 <p>Please confirm your choice.</p>
 <button>Show Details & Confirm</button>
 
@@ -34,6 +35,7 @@
         modal.open();
     });
 
+    // Confirmed
     modal.addEventListener('confirm', (event) => {
         console.log('Confirmed (modal)...');
         event.stopPropagation();
@@ -43,6 +45,7 @@
         console.log('Confirmed (body)...');
     });
 
+    // Cancelled
     modal.addEventListener('cancel', () => {
         console.log('Cancelled (modal)...');
     });
