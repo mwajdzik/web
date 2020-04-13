@@ -34,7 +34,7 @@ class Tooltip extends HTMLElement {
                     cursor: default;
                 }
                 
-                /* style what is put in the slot - only top level */
+                /* style what is put in the slot - only top level is allowed */
                 ::slotted(b) {
                     text-decoration: underline;
                 }

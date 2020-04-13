@@ -22,10 +22,28 @@ https://developer.mozilla.org/en-US/docs/Web/Web_Components
 - Angular Elements
 
 
+## vanilla-js-tooltip
+- define a new element: ```customElements.define('uc-tooltip', Tooltip);```
+- add a class extends HTMLElement or a specific element like HTMLAnchorElement ```<a is="component>``` 
+- the lifecycle of an element:
+    - constructor - basic initialization 
+    - connectedElement - DOM initialization
+    - disconnectedElement - clean up
+    - attributeChangeCallback - update data and DOM based on attribute changes
+- add an attribute 
+    - ``` getAttribute('name') ```
+    - ``` static get observedAttributes()  -  attributeChangedCallback```
+- use the shadow DOM if desired ``` this.attachShadow({mode: "open"}) ```
+- use templates ``` <slot>Some default</slot> ```
+
+
+## vanilla-js-modal
+
+
 ## StencilJS
 
 ```
-npm init stecil
+npm init stencil
 npm run test
 npm start
 npm run build
@@ -44,18 +62,6 @@ These components have (vanilla) JavaScript added to them that enhances the web c
     to reduce the amount of work JS and the browser have to do)
     
 
-## vanilla-js-tooltip
-- define a new element: ```customElements.define('uc-tooltip', Tooltip);```
-- add a class extends HTMLElement or a specific element like HTMLAnchorElement ```<a is="component>``` 
-- the lifecycle of an element:
-    - constructor - basic initialization 
-    - connectedElement - DOM initialization
-    - disconnectedElement - clean up
-    - attributeChangeCallback - update data and DOM based on attribute changes
-- add an attribute 
-    - ``` getAttribute('name') ```
-    - ``` static get observedAttributes()  -  attributeChangedCallback```
-- use the shadow DOM if desired ``` this.attachShadow({mode: "open"}) ```
-- use templates ``` <slot>Some default</slot> ```
+## stencil-stocks
 
-## vanilla-js-modal
+

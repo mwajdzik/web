@@ -2,6 +2,7 @@ import { Config } from '@stencil/core';
 
 export const config: Config = {
   namespace: 'stencil-stocks',
+  taskQueue: 'async',
   outputTargets: [
     {
       type: 'dist',

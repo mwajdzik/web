@@ -6,8 +6,6 @@
     <script src="tooltip.js"></script>
     <script src="confirm-link.js"></script>
 
-    <!-- the content of the slot is NOT a part of the shadow DOM -->
-    <!-- we can use ::slotted to style the outside content from the component -->
     <style>
         * {
             box-sizing: border-box;
@@ -19,6 +17,8 @@
             --color-primary: #777
         }
 
+        /* the content of the slot is NOT a part of the shadow DOM */
+        /* we can use ::slotted to style the outside content from the component */
         b {
             color: #2e6da4;
         }
@@ -56,9 +56,9 @@
 
 <script>
     setTimeout(() => {
-        const tooltip1 = document.querySelector('#tooltip-one');
-        tooltip1.setAttribute('text', 'My modified tooltip content');
         console.log('Modifying the attribute...');
+        const tooltip = document.querySelector('#tooltip-one');
+        tooltip.setAttribute('text', 'My modified tooltip content');
     }, 2000);
 </script>
 </body>
