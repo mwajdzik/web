@@ -1,4 +1,4 @@
-import {Component, Method, Prop, State, h} from '@stencil/core';
+import {Component, h, Method, Prop, State} from '@stencil/core';
 
 @Component({
   tag: 'uc-side-drawer',
@@ -8,6 +8,7 @@ import {Component, Method, Prop, State, h} from '@stencil/core';
 export class SideDrawer {
 
   // @Prop properties are set from the outside
+  // reflect means keeping prop values in sync with their respective attributes
   @Prop({reflect: true}) sideDrawerTitle: string;
   @Prop({reflect: true, mutable: true}) opened = false;         // mutable - watched by Stencil for internal changes
 
@@ -34,12 +35,15 @@ export class SideDrawer {
 
     if (this.opened) {
       return [
-        <div class="backdrop" onClick={this.onCloseDrawer.bind(this)}/>,
+        <div class="backdrop"
+             onClick={this.onCloseDrawer.bind(this)}/>,
+
         <aside>
           <header>
             <h1>{this.sideDrawerTitle}</h1>
             <button onClick={this.onCloseDrawer.bind(this)}>X</button>
           </header>
+
           <section id="tabs">
             <button
               class={!this.showContactInfo ? 'active' : ''}
@@ -50,6 +54,7 @@ export class SideDrawer {
               onClick={this.onContentChange.bind(this, 'contact')}>Contact
             </button>
           </section>
+
           <main>
             {mainContent}
           </main>

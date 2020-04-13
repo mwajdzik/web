@@ -1,4 +1,4 @@
-import {Component, Element, Listen, Prop, State, Watch, h} from '@stencil/core';
+import {Component, Element, h, Listen, Prop, State, Watch} from '@stencil/core';
 import {AV_API_KEY} from "../../global/api";
 
 @Component({
@@ -49,7 +49,7 @@ export class StockPrice {
   // @Listen for ucSymbolSelected
   // ------------------------------------------------------------------------------------
 
-  @Listen('ucSymbolSelected', { target: 'body' })
+  @Listen('ucSymbolSelected', {target: 'body'})
   onStockSymbolSelected(event: CustomEvent) {
     if (event.detail && event.detail !== this.stockSymbol) {
       this.fetchStockSymbol(event.detail);

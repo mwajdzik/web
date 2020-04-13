@@ -33,37 +33,41 @@
 <uc-side-drawer side-drawer-title="Main Menu" opened>
   <nav class="side-nav">
     <ul>
-      <li><a href="">A First Link</a></li>
-      <li><a href="">A Second Link</a></li>
-      <li><a href="">A Third Link</a></li>
+      <li><a href="#">A First Link</a></li>
+      <li><a href="#">A Second Link</a></li>
+      <li><a href="#">A Third Link</a></li>
     </ul>
   </nav>
 </uc-side-drawer>
 
 <script>
-    const sideDrawer = document.querySelector('uc-side-drawer');
-    const sideDrawerButton = document.querySelector('#side-drawer-button');
+  const sideDrawer = document.querySelector('uc-side-drawer');
+  const sideDrawerButton = document.querySelector('#side-drawer-button');
 
-    setTimeout(() => {
-        sideDrawer.sideDrawerTitle = '** Main Menu **';
-    }, 2500);
+  sideDrawerButton.addEventListener('click', () => {
+    sideDrawer.isOpened()
+      .then((opened) => {
+        if (!opened) {
+          sideDrawer.openDrawer();
+        }
+      });
+  });
 
-    setTimeout(() => {
-        sideDrawer.setAttribute('side-drawer-title', '**** Main Menu ****');
-    }, 5000);
+  // ----------
 
-    setTimeout(() => {
-        sideDrawer.opened = false;
-    }, 7500);
+  setTimeout(() => {
+    // modify the property
+    sideDrawer.sideDrawerTitle = '** Main Menu **';
+  }, 2500);
 
-    sideDrawerButton.addEventListener('click', () => {
-        sideDrawer.isOpened()
-            .then((opened) => {
-                if (!opened) {
-                    sideDrawer.openDrawer();
-                }
-            });
-    });
+  setTimeout(() => {
+    // modify the attribute
+    sideDrawer.setAttribute('side-drawer-title', '**** Main Menu ****');
+  }, 5000);
+
+  setTimeout(() => {
+    sideDrawer.opened = false;
+  }, 7500);
 </script>
 </body>
 </html>

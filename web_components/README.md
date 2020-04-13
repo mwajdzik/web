@@ -1,7 +1,4 @@
-
-https://developer.mozilla.org/en-US/docs/Web/Web_Components
-
-## Web components
+## [Web components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
 
 - custom HTML element - registering own HTML tags
 - Shadow DOM - separate DOM node tree
@@ -63,6 +60,13 @@ These components have (vanilla) JavaScript added to them that enhances the web c
     
 
 ## stencil-side-drawer
+
+- define a class with a @Component annotation
+- implement render() method that returns JSX
+- add styleUrl
+- add properties with @Prop()
+- add state properties with @State()
+- add methods with @Method()
 
 
 ## stencil-stocks
