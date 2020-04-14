@@ -37,21 +37,21 @@
 
     // Confirmed
     modal.addEventListener('confirm', (event) => {
-        console.log('Confirmed (modal)...');
+        console.log('Confirmed (modal). Stopping propagation.');
         event.stopPropagation();
     });
 
     body.addEventListener('confirm', () => {
-        console.log('Confirmed (body)...');
+        console.log('Confirmed (body). Will not happen.');
     });
 
     // Cancelled
     modal.addEventListener('cancel', () => {
-        console.log('Cancelled (modal)...');
+        console.log('Cancelled (modal).');
     });
 
     body.addEventListener('cancel', () => {
-        console.log('Cancelled (body)...');
+        console.log('Cancelled (body).');
     });
 </script>
 </body>

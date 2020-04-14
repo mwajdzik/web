@@ -88,6 +88,7 @@ class Modal extends HTMLElement {
         `;
 
         const slots = this.shadowRoot.querySelectorAll('slot');
+
         slots[1].addEventListener('slotchange', (event) => {
             console.log('New content arrived to the slot');
             console.dir(slots[1].assignedNodes())
@@ -128,9 +129,10 @@ class Modal extends HTMLElement {
     _cancel(event) {
         this.hide();
 
+        // event.target is the clicked button
+        // bubbles - goes up in the DOM
         // composed - event can leave the shadow DOM
-        const cancelEvent = new Event('cancel', {bubbles: true, composed: true});
-        event.target.dispatchEvent(cancelEvent);
+        event.target.dispatchEvent(new Event('cancel', {bubbles: true, composed: true}));
 
         // or:
         this.dispatchEvent(new Event('cancel'));                                // only modal will catch it
@@ -140,8 +142,7 @@ class Modal extends HTMLElement {
     _confirm(event) {
         this.hide();
 
-        const confirmEvent = new Event('confirm', {bubbles: true, composed: true});
-        event.target.dispatchEvent(confirmEvent);
+        event.target.dispatchEvent(new Event('confirm', {bubbles: true, composed: true}));
     }
 }
 
