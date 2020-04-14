@@ -41,10 +41,7 @@ export class BarChart {
 
   private resizeEventListener: EventListenerOrEventListenerObject;
 
-  // -------------------------------------------------------------------------------------------------------------------
-
-  private yGridLines = () =>
-    axisLeft(this.y).ticks(5);
+  private yGridLines = () => axisLeft(this.y).ticks(5);
 
   render() {
     return [
@@ -93,16 +90,12 @@ export class BarChart {
     window.removeEventListener('resize', this.resizeEventListener);
   }
 
-  // -------------------------------------------------------------------------------------------------------------------
-
   @Watch('data')
   itemsChanged(newValue: ChartDataType, oldValue: ChartDataType) {
     if (newValue !== oldValue) {
       this.newDataHandler();
     }
   }
-
-  // -------------------------------------------------------------------------------------------------------------------
 
   addEventListeners() {
     this.resizeEventListener = () => this.redrawChart();
@@ -112,8 +105,6 @@ export class BarChart {
       event.preventDefault();
     })
   }
-
-  // -------------------------------------------------------------------------------------------------------------------
 
   redrawChart() {
     if (!this.data) {

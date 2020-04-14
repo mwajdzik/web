@@ -112,7 +112,6 @@ export class StockPrice {
     console.log('render()');
 
     let dataContent;
-    const stockUserInputValid = this.stockSymbol.trim().length > 0;
 
     if (this.error) {
       dataContent = <p>{this.error}</p>;
@@ -131,7 +130,7 @@ export class StockPrice {
                onInput={this.onUserInput.bind(this)}
                ref={el => this.stockInput = el}/>
         <button type="submit"
-                disabled={!stockUserInputValid || this.loading}
+                disabled={this.stockSymbol.trim().length == 0 || this.loading}
                 ref={el => this.submitButton = el}>
           Fetch
         </button>
