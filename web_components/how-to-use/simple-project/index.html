@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Component Test</title>
+    <script type="module" src="lib/stocks/stencil-stocks/stencil-stocks.esm.js"></script>
+    <script nomodule="" src="lib/stocks/stencil-stocks/stencil-stocks.js"></script>
+    <style>
+        uc-stock-finder {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<uc-stock-price stock-symbol="SABR"></uc-stock-price>
+
+<div>
+    <uc-stock-finder></uc-stock-finder>
+    <uc-stock-finder></uc-stock-finder>
+    <uc-stock-finder></uc-stock-finder>
+</div>
+</body>
+</html>

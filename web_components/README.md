@@ -76,3 +76,9 @@ These components have (vanilla) JavaScript added to them that enhances the web c
 - lifecycle methods: componentWillLoad, componentDidLoad, componentWillUpdate, componentDidUpdate, componentDidUnload
 - add events with: ``` @Event({bubbles: true, composed: true}) ucSymbolSelected: EventEmitter<string>; ```
 - listen to events with: ``` @Listen('ucSymbolSelected', {target: 'body'}) onStockSymbolSelected(event: CustomEvent) { ... } ```
+
+## Deployment
+
+- stencil.config.ts
+- www - complete static web page based on index.html (useful when building a web page entirely with StencilJS)
+- dist - components that can be shared

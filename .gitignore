@@ -11,6 +11,7 @@ api.tsx
 dist/
 www/
 loader/
+lib/
 
 *~
 *.sw[mnpcod]
