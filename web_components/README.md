@@ -71,4 +71,8 @@ These components have (vanilla) JavaScript added to them that enhances the web c
 
 ## stencil-stocks
 
-
+- access the host element: ``` @Element() el: HTMLElement; ```
+- watch the property: ``` @Watch('stockSymbol') ```
+- lifecycle methods: componentWillLoad, componentDidLoad, componentWillUpdate, componentDidUpdate, componentDidUnload
+- add events with: ``` @Event({bubbles: true, composed: true}) ucSymbolSelected: EventEmitter<string>; ```
+- listen to events with: ``` @Listen('ucSymbolSelected', {target: 'body'}) onStockSymbolSelected(event: CustomEvent) { ... } ```

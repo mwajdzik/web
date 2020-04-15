@@ -8,21 +8,20 @@ import {AV_API_KEY} from "../../global/api";
 })
 export class StockPrice {
 
-  submitButton: HTMLButtonElement;
-  stockInput: HTMLInputElement;
+  private stockInput: HTMLInputElement;
+  private stockSymbolEl: HTMLInputElement;
 
-  @Element() el: HTMLElement;
+  @Element() private el: HTMLElement;
 
-  @State() fetchedPrice: number;
-  @State() stockUserInput: string;
-  @State() error: string;
-  @State() loading = false;
+  @State() private fetchedPrice: number;
+  @State() private stockUserInput: string;
+  @State() private error: string;
+  @State() private loading = false;
 
   // ------------------------------------------------------------------------------------
-  // @Watch for stockSymbol
-  // ------------------------------------------------------------------------------------
 
-  @Prop({mutable: true, reflectToAttr: true}) stockSymbol: string;
+  @Prop({mutable: true, reflect: true})
+  public stockSymbol: string;
 
   @Watch('stockSymbol')
   stockSymbolChanged(newValue: string, oldValue: string) {
@@ -34,21 +33,6 @@ export class StockPrice {
 
   // ------------------------------------------------------------------------------------
 
-  onFetchStockPrice(event: Event) {
-    event.preventDefault();
-
-    const inputValue1 = this.stockUserInput;
-    const inputValue2 = this.stockInput.value;
-    const inputValue3 = (this.el.shadowRoot.querySelector('#stock-symbol') as HTMLInputElement).value;
-    console.log('Three ways of accessing the value from the input:', inputValue1, inputValue2, inputValue3);
-
-    this.fetchStockSymbol(inputValue1);
-  }
-
-  // ------------------------------------------------------------------------------------
-  // @Listen for ucSymbolSelected
-  // ------------------------------------------------------------------------------------
-
   @Listen('ucSymbolSelected', {target: 'body'})
   onStockSymbolSelected(event: CustomEvent) {
     if (event.detail && event.detail !== this.stockSymbol) {
@@ -58,7 +42,7 @@ export class StockPrice {
 
   // ------------------------------------------------------------------------------------
 
-  fetchStockSymbol(stockSymbol: string) {
+  private fetchStockSymbol(stockSymbol: string) {
     this.loading = true;
     this.error = undefined;
     this.stockSymbol = stockSymbol;
@@ -93,20 +77,6 @@ export class StockPrice {
   }
 
   // ------------------------------------------------------------------------------------
-  // hostData - executed after render()
-  // ------------------------------------------------------------------------------------
-
-  hostData() {
-    console.log('hostData()');
-
-    return {
-      class: this.error ? 'error hydrated' : 'hydrated'
-    }
-  }
-
-  // ------------------------------------------------------------------------------------
-  // render
-  // ------------------------------------------------------------------------------------
 
   render() {
     console.log('render()');
@@ -130,8 +100,7 @@ export class StockPrice {
                onInput={this.onUserInput.bind(this)}
                ref={el => this.stockInput = el}/>
         <button type="submit"
-                disabled={this.stockSymbol.trim().length == 0 || this.loading}
-                ref={el => this.submitButton = el}>
+                disabled={this.stockSymbol.trim().length == 0 || this.loading}>
           Fetch
         </button>
       </form>,
@@ -139,6 +108,26 @@ export class StockPrice {
         {dataContent}
       </div>
     ]
+  }
+
+  // executed after render()
+  hostData() {
+    console.log('hostData()');
+
+    this.stockSymbolEl = this.el.shadowRoot.querySelector('#stock-symbol') as HTMLInputElement
+
+    return {
+      class: this.error ? 'error hydrated' : 'hydrated'
+    }
+  }
+
+  onFetchStockPrice(event: Event) {
+    event.preventDefault();
+
+    console.log('Three ways of accessing the value from the input:',
+      this.stockUserInput, this.stockInput.value, this.stockSymbolEl.value);
+
+    this.fetchStockSymbol(this.stockUserInput);
   }
 
   // ------------------------------------------------------------------------------------

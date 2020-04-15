@@ -8,10 +8,13 @@ import {AV_API_KEY} from "../../global/api";
 })
 export class StockPrice {
 
-  stockNameInput: HTMLInputElement;
+  private stockNameInput: HTMLInputElement;
 
-  @State() searchResults: { symbol: string, name: string }[] = [];
-  @Event({bubbles: true, composed: true}) ucSymbolSelected: EventEmitter<string>;
+  @State()
+  private searchResults: { symbol: string, name: string }[] = [];
+
+  @Event({bubbles: true, composed: true})
+  ucSymbolSelected: EventEmitter<string>;
 
   onFindStocks(event: Event) {
     event.preventDefault();

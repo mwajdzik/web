@@ -11,5 +11,13 @@
 <body>
 <uc-stock-price stock-symbol="SABR"></uc-stock-price>
 <uc-stock-finder></uc-stock-finder>
+
+<script>
+  const finder = document.querySelector('uc-stock-finder');
+
+  finder.addEventListener('ucSymbolSelected', (event) => {
+    console.log(event);
+  });
+</script>
 </body>
 </html>
